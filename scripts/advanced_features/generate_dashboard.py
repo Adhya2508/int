@@ -56,7 +56,7 @@ def main():
         with open(vr_path, "r", encoding="utf-8") as f:
             rules = json.load(f)
             for k, v in rules.items():
-                rag_docs.append({"source": "validation_rules.json", "content": f"{k}: {json.dumps(v)}"})
+                rag_docs.append({"source": "validation_rules.json", "content": f"[{k}]: {json.dumps(v)}"})
 
     # Load Active learning review queue
     al_queue = []
