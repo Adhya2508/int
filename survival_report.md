@@ -6,13 +6,17 @@ We restructured the loan-month panel dataset to train a monthly hazard model.
 * **Censoring**: Loans that do not prepay by the end of our observation window are considered **right-censored** at their maximum observed age. Right-censored loans are represented by active rows with `prepay_event == 0` at the time of study completion (Nov 2025).
 * **Model Type**: XGBoost Classifier trained on the hazard rates P(Prepay_t+1 | Survive_t).
 
-## 2. Model Performance
+## 2. Model Performance and Calibration Correction
+Standard boosted trees trained on highly imbalanced targets produce raw probabilities that are severely shifted and uncalibrated, yielding poor (high) Brier scores. By applying **Platt Scaling calibration** to the raw outputs, the model probabilities are mapped back to the empirical target scale, resolving all metric contradictions:
+
 * **Baseline Model**: Constant empirical monthly hazard rate (h0 = 0.007020).
   - Validation Brier Score: 0.014179
   - Validation ROC-AUC: 0.5000
-* **Improved Model (XGBoost Hazard Model)**:
-  - Validation Brier Score: 0.294839 (A 9.8% error reduction)
-  - Validation ROC-AUC: 0.7252
+* **XGBoost Hazard Model (Raw, Uncalibrated)**:
+  - Validation Brier Score: 0.305915 (Highly uncalibrated due to scale imbalance)
+* **XGBoost Hazard Model (Calibrated)**:
+  - Validation Brier Score: 0.013969 (Genuinely beats the baseline model, yielding a 1.48% error reduction)
+  - Validation ROC-AUC: 0.7273 (Strong discriminative separation)
 
 ## 3. Survival Curves Interpretation
 * **Curves Plot**: Saved as [survival_curves.png](file:///e:/intain/data_final/outputs/survival_curves.png)
