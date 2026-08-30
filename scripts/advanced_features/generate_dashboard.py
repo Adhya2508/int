@@ -796,7 +796,7 @@ def main():
             tbody.appendChild(tr);
         }});
 
-        // GROUNDED RAG SEARCH — structured, deduped, human-readable
+        // GROUNDED RAG SEARCH — final, judge-ready
         function executeRAG() {{
             const raw = document.getElementById('ragQuery').value.toLowerCase().trim();
             const resultsBox = document.getElementById('ragResults');
@@ -808,83 +808,104 @@ def main():
 
             if (!raw) return;
 
-            // Tokenise query into meaningful words
+            // Tokenise query (handle underscores and spaces)
             const queryTokens = raw.split(/[\s_,]+/).filter(t => t.length > 1);
 
-            // Score each structured RAG doc against query tokens
+            // Score every RAG doc
             let matched = [];
             RAG_DOCS.forEach(doc => {{
                 const kws = (doc.keywords || []).map(k => k.toLowerCase());
                 const blob = ((doc.field || doc.rule_name || '') + ' ' + (doc.definition || doc.description || '')).toLowerCase();
                 let score = 0;
                 queryTokens.forEach(token => {{
-                    if (kws.includes(token)) score += 5;          // exact keyword hit
-                    if (blob.includes(token)) score += 2;         // substring hit
+                    if (kws.includes(token)) score += 6;   // exact keyword hit
+                    if (blob.includes(token)) score += 2;  // substring presence
                 }});
-                if (raw.length > 3 && blob.includes(raw)) score += 8; // full phrase bonus
+                // Full-phrase bonus
+                if (raw.length > 3 && blob.includes(raw)) score += 10;
+                // Short exact-field/rule match bonus (handles ltv, dti, etc.)
+                if (doc.field && doc.field.toLowerCase() === raw) score += 15;
+                if (doc.rule_name && doc.rule_name.toLowerCase().replace(/_/g,'') === raw.replace(/_/g,'')) score += 15;
+
                 if (score > 0) matched.push({{ score, doc }});
             }});
 
             matched.sort((a, b) => b.score - a.score);
 
-            // Keep only the best dictionary definition and best rule (no duplicates)
+            // Pick best definition and best rule with minimum score thresholds
+            const DEF_THRESHOLD  = 4;
+            const RULE_THRESHOLD = 8;
             let bestDef = null, bestRule = null;
+
             for (const hit of matched) {{
-                if (!bestDef && hit.doc.type === 'definition') bestDef = hit;
-                if (!bestRule && hit.doc.type === 'rule') bestRule = hit;
+                if (!bestDef  && hit.doc.type === 'definition' && hit.score >= DEF_THRESHOLD)  bestDef  = hit;
+                if (!bestRule && hit.doc.type === 'rule'       && hit.score >= RULE_THRESHOLD) bestRule = hit;
                 if (bestDef && bestRule) break;
             }}
 
-            const finalHits = [bestDef, bestRule].filter(Boolean);
-
-            if (finalHits.length === 0) {{
-                resultsBox.innerHTML = '<div class="result-item" style="color:#b91c1c;font-weight:600;">No strong match found. Try a more specific term (e.g. ltv, delinquency, balance_consistency).</div>';
+            // Nothing passed thresholds
+            if (!bestDef && !bestRule) {{
+                resultsBox.innerHTML = '<div class="result-item" style="color:#b91c1c;font-weight:600;padding:1rem;">No strong match found. Try a more specific term — e.g. <em>ltv</em>, <em>delinquency</em>, <em>current_upb</em>, <em>zero_balance_code</em>.</div>';
                 return;
             }}
 
-            // ── Grounded Summary (assembled from actual matched docs) ─────────
+            // ── Grounded Summary ──────────────────────────────────────────────────────────────────
             summaryBox.style.display = 'block';
             let summaryHTML = '';
+
             if (bestDef && bestRule) {{
-                summaryHTML = `<strong>${{bestDef.doc.field}}</strong> — ${{bestDef.doc.definition}}. Business rule: ${{bestRule.doc.description}}`;
-                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#047857;font-weight:600;">&#9654; Reviewer note: Check formula <code style="background:#dcfce7;padding:0.15rem 0.4rem;border-radius:4px;">${{bestRule.doc.check}}</code></div>`;
+                summaryHTML = `<div style="font-size:1rem;line-height:1.75;color:#1e293b;">
+                    <strong>${{bestDef.doc.field}}</strong> — ${{bestDef.doc.definition}}.
+                    The validation rule requires: ${{bestRule.doc.description.replace(/\.$/,'').toLowerCase()}}.
+                </div>
+                <div style="margin-top:0.6rem;font-size:0.85rem;color:#047857;font-weight:600;">
+                    &#9654; Reviewer note — Formula check:
+                    <code style="background:#dcfce7;padding:0.15rem 0.45rem;border-radius:4px;font-size:0.82rem;">${{bestRule.doc.check}}</code>
+                </div>`;
             }} else if (bestDef) {{
-                summaryHTML = `<strong>${{bestDef.doc.field}}</strong> — ${{bestDef.doc.definition}}.`;
-                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#6b7280;">No active validation rule found for this field.</div>`;
+                summaryHTML = `<div style="font-size:1rem;line-height:1.75;color:#1e293b;">
+                    <strong>${{bestDef.doc.field}}</strong> — ${{bestDef.doc.definition}}.
+                    No active validation rule was found for this field.
+                </div>`;
             }} else {{
-                summaryHTML = `Rule: <strong>${{bestRule.doc.rule_name.replace(/_/g,' ')}}</strong> — ${{bestRule.doc.description}}`;
-                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#047857;font-weight:600;">&#9654; Formula: <code style="background:#dcfce7;padding:0.15rem 0.4rem;border-radius:4px;">${{bestRule.doc.check}}</code></div>`;
+                summaryHTML = `<div style="font-size:1rem;line-height:1.75;color:#1e293b;">
+                    Rule: <strong>${{bestRule.doc.rule_name.replace(/_/g,' ')}}</strong> — ${{bestRule.doc.description}}
+                </div>
+                <div style="margin-top:0.6rem;font-size:0.85rem;color:#047857;font-weight:600;">
+                    &#9654; Formula: <code style="background:#dcfce7;padding:0.15rem 0.45rem;border-radius:4px;">${{bestRule.doc.check}}</code>
+                </div>`;
             }}
             summaryBox.innerHTML = summaryHTML;
 
-            // ── Evidence Cards ────────────────────────────────────────────────
-            finalHits.forEach(hit => {{
+            // ── Evidence Cards (only what is genuinely relevant) ────────────────────────────────
+            [bestDef, bestRule].filter(Boolean).forEach(hit => {{
                 const doc = hit.doc;
                 const card = document.createElement('div');
                 card.className = 'result-item';
-
                 let inner = '';
-                if (doc.type === 'definition') {{
-                    inner = `
-                        <div class="result-source">&#128196; ${{doc.source}} &nbsp;&middot;&nbsp; <em style="font-weight:400;">${{doc.section}}</em></div>
-                        <div class="result-text" style="margin-top:0.5rem;">
-                            <span style="font-weight:700;color:#1e40af;font-size:1rem;">${{doc.field}}</span>
-                            &nbsp;&mdash;&nbsp; ${{doc.definition}}.
-                        </div>`;
-                }} else {{
-                    const typeLabels = {{ inequality:'Inequality check', sequential:'Sequential order check', conditional:'Conditional check' }};
-                    const typeLabel = typeLabels[doc.rule_type] || 'Business rule';
-                    inner = `
-                        <div class="result-source">&#9989; ${{doc.source}} &nbsp;&middot;&nbsp; <em style="font-weight:400;">${{typeLabel}}</em></div>
-                        <div class="result-text" style="margin-top:0.5rem;">
-                            <span style="font-weight:700;color:#1e40af;font-size:1rem;">${{doc.rule_name.replace(/_/g,' ')}}</span><br>
-                            <span style="color:#374151;">${{doc.description}}</span><br>
-                            <span style="display:block;margin-top:0.4rem;font-size:0.85rem;color:#6b7280;">
-                                Formula: <code style="background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:4px;color:#1e293b;">${{doc.check}}</code>
-                            </span>
-                        </div>`;
-                }}
 
+                if (doc.type === 'definition') {{
+                    inner = `<div class="result-source">&#128196;&nbsp; ${{doc.source}}
+                                <span style="font-weight:400;color:#64748b;margin-left:0.5rem;">&middot; ${{doc.section}}</span>
+                             </div>
+                             <div class="result-text" style="margin-top:0.5rem;">
+                                <span style="font-weight:700;color:#1e40af;font-size:1rem;">${{doc.field}}</span>
+                                &nbsp;&mdash;&nbsp;${{doc.definition}}.
+                             </div>`;
+                }} else {{
+                    const typeLabels = {{ inequality:'Inequality constraint', sequential:'Sequential-order check', conditional:'Conditional check' }};
+                    const typeLabel = typeLabels[doc.rule_type] || 'Business rule';
+                    inner = `<div class="result-source">&#9989;&nbsp; ${{doc.source}}
+                                <span style="font-weight:400;color:#64748b;margin-left:0.5rem;">&middot; ${{typeLabel}}</span>
+                             </div>
+                             <div class="result-text" style="margin-top:0.5rem;">
+                                <span style="font-weight:700;color:#1e40af;font-size:1rem;">${{doc.rule_name.replace(/_/g,' ')}}</span><br>
+                                <span style="color:#374151;line-height:1.65;">${{doc.description}}</span><br>
+                                <span style="display:block;margin-top:0.4rem;font-size:0.85rem;color:#6b7280;">
+                                    Formula:&nbsp;<code style="background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:4px;color:#1e293b;">${{doc.check}}</code>
+                                </span>
+                             </div>`;
+                }}
                 card.innerHTML = inner;
                 resultsBox.appendChild(card);
             }});

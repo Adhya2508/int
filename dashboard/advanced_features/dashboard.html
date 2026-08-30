@@ -636,7 +636,7 @@
     const SENSITIVITY = {"credit_stress_probability": 0.05197371766911569, "rate_stress_probability": 0.16308608900588464, "base_probability": 0.061164898660107804};
     const CONF_INTERVAL = {"roc_auc_ci": [0.8053899951485773, 0.8159121519876568], "brier_score_ci": [0.047176823829107845, 0.04930069632676853]};
     const SYNTHETIC = {"synthetic_prepay_probability": 0.023731725930093768, "description": "Stress testing of extreme cohort: credit=500, LTV=98%, DTI=62%."};
-    const RAG_DOCS = [{"type": "definition", "source": "Data Dictionary", "field": "loan_id", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Unique loan identifier (string)", "keywords": ["loan", "id", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "orig_balance", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Original loan balance at origination (numeric)", "keywords": ["orig", "balance", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "credit_score", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Borrower credit score at origination (numeric)", "keywords": ["credit", "score", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "ltv", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Loan-to-Value ratio at origination (numeric)", "keywords": ["ltv", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "dti", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Debt-to-Income ratio at origination (numeric)", "keywords": ["dti", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "state", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "US State code (string)", "keywords": ["state", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_purpose", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Purpose of loan (P=Purchase, C=Cash-out Refi, R=Rate/Term Refi)", "keywords": ["loan", "purpose", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "property_type", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Type of property (SF=Single Family, CO=Condo, PU=PUD)", "keywords": ["property", "type", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "vintage", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Year/Quarter of origination (string)", "keywords": ["vintage", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_id", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Unique loan identifier", "keywords": ["loan", "id", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "reporting_period", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Month and year of the record (MMYYYY)", "keywords": ["reporting", "period", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "current_upb", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Current unpaid principal balance", "keywords": ["current", "upb", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "current_interest_rate", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Current interest rate", "keywords": ["current", "interest", "rate", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_age", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Age of the loan in months", "keywords": ["loan", "age", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "remaining_months", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Remaining months to maturity", "keywords": ["remaining", "months", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "delinquency_status", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Current delinquency status (0=Current, 1=30D, 2=60D, etc.)", "keywords": ["delinquency", "status", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "zero_balance_code", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Reason for zero balance (e.g., 01=Prepaid, 02=Third Party Sale, 03=Short Sale, 09=REO)", "keywords": ["zero", "balance", "code", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_id", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Unique loan identifier", "keywords": ["loan", "id", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "reporting_period", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Month and year of the record (MMYYYY)", "keywords": ["reporting", "period", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "delinquency_status", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Updated delinquency status", "keywords": ["delinquency", "status", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "current_upb", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Updated current unpaid principal balance", "keywords": ["current", "upb", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "update_date", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Date the servicer update was received", "keywords": ["update", "date", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "rule", "source": "Validation Rules", "rule_name": "balance_consistency", "description": "Current UPB cannot be greater than original balance + tolerance.", "check": "current_upb <= orig_balance * 1.05", "rule_type": "inequality", "keywords": ["orig_balance", "balance", "consistency", "current_upb"]}, {"type": "rule", "source": "Validation Rules", "rule_name": "delinquency_progression", "description": "Delinquency status cannot jump more than 1 month at a time.", "check": "delinquency_status(t) <= delinquency_status(t-1) + 1", "rule_type": "sequential", "keywords": ["delinquency_status", "delinquency", "t", "progression"]}, {"type": "rule", "source": "Validation Rules", "rule_name": "closed_prepaid_status", "description": "If UPB is 0, zero_balance_code must be populated.", "check": "if current_upb == 0 then zero_balance_code is not null", "rule_type": "conditional", "keywords": ["current_upb", "prepaid", "then", "closed", "zero_balance_code", "not", "if", "null", "status", "is"]}];
+    const RAG_DOCS = [{"type": "definition", "source": "Data Dictionary", "field": "loan_id", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Unique loan identifier (string)", "keywords": ["loan", "id", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "orig_balance", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Original loan balance at origination (numeric)", "keywords": ["orig", "balance", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "credit_score", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Borrower credit score at origination (numeric)", "keywords": ["credit", "score", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "ltv", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Loan-to-Value ratio at origination (numeric)", "keywords": ["ltv", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "dti", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Debt-to-Income ratio at origination (numeric)", "keywords": ["dti", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "state", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "US State code (string)", "keywords": ["state", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_purpose", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Purpose of loan (P=Purchase, C=Cash-out Refi, R=Rate/Term Refi)", "keywords": ["loan", "purpose", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "property_type", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Type of property (SF=Single Family, CO=Condo, PU=PUD)", "keywords": ["property", "type", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "vintage", "section": "Static Attributes (`loan_static_attributes.csv`)", "definition": "Year/Quarter of origination (string)", "keywords": ["vintage", "static", "attributes", "loan_static_attributes", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_id", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Unique loan identifier", "keywords": ["loan", "id", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "reporting_period", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Month and year of the record (MMYYYY)", "keywords": ["reporting", "period", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "current_upb", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Current unpaid principal balance", "keywords": ["current", "upb", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "current_interest_rate", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Current interest rate", "keywords": ["current", "interest", "rate", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_age", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Age of the loan in months", "keywords": ["loan", "age", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "remaining_months", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Remaining months to maturity", "keywords": ["remaining", "months", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "delinquency_status", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Current delinquency status (0=Current, 1=30D, 2=60D, etc.)", "keywords": ["delinquency", "status", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "zero_balance_code", "section": "Monthly Performance (`loan_monthly_performance_*.csv`)", "definition": "Reason for zero balance (e.g., 01=Prepaid, 02=Third Party Sale, 03=Short Sale, 09=REO)", "keywords": ["zero", "balance", "code", "monthly", "performance", "loan_monthly_performance_", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "loan_id", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Unique loan identifier", "keywords": ["loan", "id", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "reporting_period", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Month and year of the record (MMYYYY)", "keywords": ["reporting", "period", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "delinquency_status", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Updated delinquency status", "keywords": ["delinquency", "status", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "current_upb", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Updated current unpaid principal balance", "keywords": ["current", "upb", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "definition", "source": "Data Dictionary", "field": "update_date", "section": "Servicer Updates (`servicer_updates.csv`)", "definition": "Date the servicer update was received", "keywords": ["update", "date", "servicer", "updates", "servicer_updates", "csv"]}, {"type": "rule", "source": "Validation Rules", "rule_name": "balance_consistency", "description": "Current UPB cannot be greater than original balance + tolerance.", "check": "current_upb <= orig_balance * 1.05", "rule_type": "inequality", "keywords": ["orig_balance", "consistency", "balance", "current_upb"]}, {"type": "rule", "source": "Validation Rules", "rule_name": "delinquency_progression", "description": "Delinquency status cannot jump more than 1 month at a time.", "check": "delinquency_status(t) <= delinquency_status(t-1) + 1", "rule_type": "sequential", "keywords": ["delinquency", "delinquency_status", "progression", "t"]}, {"type": "rule", "source": "Validation Rules", "rule_name": "closed_prepaid_status", "description": "If UPB is 0, zero_balance_code must be populated.", "check": "if current_upb == 0 then zero_balance_code is not null", "rule_type": "conditional", "keywords": ["zero_balance_code", "prepaid", "then", "is", "not", "null", "if", "closed", "status", "current_upb"]}];
     const AL_QUEUE = [{"loan_id": 139458706, "credit_score": 644.0, "ltv": 5, "dti": 33, "prob_base": 0.0407299807584728, "anomaly_score": 1.0, "active_learning_priority": 0.9460649903792364, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Borderline decision confidence: check recent borrower credit inquiries."}, {"loan_id": 139442902, "credit_score": 729.0, "ltv": 60, "dti": 16, "prob_base": 0.1203286340052769, "anomaly_score": 0.9146963446626762, "active_learning_priority": 0.9432124893339766, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Borderline decision confidence: check recent borrower credit inquiries."}, {"loan_id": 139438055, "credit_score": 682.0, "ltv": 64, "dti": 25, "prob_base": 0.1881638552214512, "anomaly_score": 0.8786938713407332, "active_learning_priority": 0.9195650080596408, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Prepayment risk threshold exceeded: inspect refinance interest rate spread."}, {"loan_id": 139469034, "credit_score": 746.0, "ltv": 80, "dti": 38, "prob_base": 0.1217801069605969, "anomaly_score": 0.8405375658757743, "active_learning_priority": 0.9068588364181857, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Borderline decision confidence: check recent borrower credit inquiries."}, {"loan_id": 139436871, "credit_score": 751.0, "ltv": 80, "dti": 39, "prob_base": 0.1501360404441889, "anomaly_score": 0.813805605400703, "active_learning_priority": 0.9061347824782572, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Prepayment risk threshold exceeded: inspect refinance interest rate spread."}, {"loan_id": 139438677, "credit_score": 749.0, "ltv": 10, "dti": 24, "prob_base": 0.3197218972649184, "anomaly_score": 0.9810583144523352, "active_learning_priority": 0.9049682085937084, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Prepayment risk threshold exceeded: inspect refinance interest rate spread."}, {"loan_id": 139468893, "credit_score": 814.0, "ltv": 14, "dti": 13, "prob_base": 0.0617303050602294, "anomaly_score": 0.8927319396749575, "active_learning_priority": 0.9029311223675937, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Borderline decision confidence: check recent borrower credit inquiries."}, {"loan_id": 139437973, "credit_score": 802.0, "ltv": 41, "dti": 28, "prob_base": 0.054189729695339, "anomaly_score": 0.896338673139531, "active_learning_priority": 0.900964201417435, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Borderline decision confidence: check recent borrower credit inquiries."}, {"loan_id": 139465015, "credit_score": 726.0, "ltv": 67, "dti": 45, "prob_base": 0.2528001563956009, "anomaly_score": 0.8960410458909072, "active_learning_priority": 0.8959204447476532, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Prepayment risk threshold exceeded: inspect refinance interest rate spread."}, {"loan_id": 139449694, "credit_score": 722.0, "ltv": 25, "dti": 42, "prob_base": 0.074225123906482, "anomaly_score": 0.8657145850762646, "active_learning_priority": 0.8956698544913734, "reviewer_note": "High statistical anomaly index: verify historical timeline for implied term inconsistencies. | Borderline decision confidence: check recent borrower credit inquiries."}];
     
         
@@ -691,7 +691,7 @@
             tbody.appendChild(tr);
         });
 
-        // GROUNDED RAG SEARCH — structured, deduped, human-readable
+        // GROUNDED RAG SEARCH — final, judge-ready
         function executeRAG() {
             const raw = document.getElementById('ragQuery').value.toLowerCase().trim();
             const resultsBox = document.getElementById('ragResults');
@@ -703,83 +703,104 @@
 
             if (!raw) return;
 
-            // Tokenise query into meaningful words
+            // Tokenise query (handle underscores and spaces)
             const queryTokens = raw.split(/[\s_,]+/).filter(t => t.length > 1);
 
-            // Score each structured RAG doc against query tokens
+            // Score every RAG doc
             let matched = [];
             RAG_DOCS.forEach(doc => {
                 const kws = (doc.keywords || []).map(k => k.toLowerCase());
                 const blob = ((doc.field || doc.rule_name || '') + ' ' + (doc.definition || doc.description || '')).toLowerCase();
                 let score = 0;
                 queryTokens.forEach(token => {
-                    if (kws.includes(token)) score += 5;          // exact keyword hit
-                    if (blob.includes(token)) score += 2;         // substring hit
+                    if (kws.includes(token)) score += 6;   // exact keyword hit
+                    if (blob.includes(token)) score += 2;  // substring presence
                 });
-                if (raw.length > 3 && blob.includes(raw)) score += 8; // full phrase bonus
+                // Full-phrase bonus
+                if (raw.length > 3 && blob.includes(raw)) score += 10;
+                // Short exact-field/rule match bonus (handles ltv, dti, etc.)
+                if (doc.field && doc.field.toLowerCase() === raw) score += 15;
+                if (doc.rule_name && doc.rule_name.toLowerCase().replace(/_/g,'') === raw.replace(/_/g,'')) score += 15;
+
                 if (score > 0) matched.push({ score, doc });
             });
 
             matched.sort((a, b) => b.score - a.score);
 
-            // Keep only the best dictionary definition and best rule (no duplicates)
+            // Pick best definition and best rule with minimum score thresholds
+            const DEF_THRESHOLD  = 4;
+            const RULE_THRESHOLD = 8;
             let bestDef = null, bestRule = null;
+
             for (const hit of matched) {
-                if (!bestDef && hit.doc.type === 'definition') bestDef = hit;
-                if (!bestRule && hit.doc.type === 'rule') bestRule = hit;
+                if (!bestDef  && hit.doc.type === 'definition' && hit.score >= DEF_THRESHOLD)  bestDef  = hit;
+                if (!bestRule && hit.doc.type === 'rule'       && hit.score >= RULE_THRESHOLD) bestRule = hit;
                 if (bestDef && bestRule) break;
             }
 
-            const finalHits = [bestDef, bestRule].filter(Boolean);
-
-            if (finalHits.length === 0) {
-                resultsBox.innerHTML = '<div class="result-item" style="color:#b91c1c;font-weight:600;">No strong match found. Try a more specific term (e.g. ltv, delinquency, balance_consistency).</div>';
+            // Nothing passed thresholds
+            if (!bestDef && !bestRule) {
+                resultsBox.innerHTML = '<div class="result-item" style="color:#b91c1c;font-weight:600;padding:1rem;">No strong match found. Try a more specific term — e.g. <em>ltv</em>, <em>delinquency</em>, <em>current_upb</em>, <em>zero_balance_code</em>.</div>';
                 return;
             }
 
-            // ── Grounded Summary (assembled from actual matched docs) ─────────
+            // ── Grounded Summary ──────────────────────────────────────────────────────────────────
             summaryBox.style.display = 'block';
             let summaryHTML = '';
+
             if (bestDef && bestRule) {
-                summaryHTML = `<strong>${bestDef.doc.field}</strong> — ${bestDef.doc.definition}. Business rule: ${bestRule.doc.description}`;
-                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#047857;font-weight:600;">&#9654; Reviewer note: Check formula <code style="background:#dcfce7;padding:0.15rem 0.4rem;border-radius:4px;">${bestRule.doc.check}</code></div>`;
+                summaryHTML = `<div style="font-size:1rem;line-height:1.75;color:#1e293b;">
+                    <strong>${bestDef.doc.field}</strong> — ${bestDef.doc.definition}.
+                    The validation rule requires: ${bestRule.doc.description.replace(/\.$/,'').toLowerCase()}.
+                </div>
+                <div style="margin-top:0.6rem;font-size:0.85rem;color:#047857;font-weight:600;">
+                    &#9654; Reviewer note — Formula check:
+                    <code style="background:#dcfce7;padding:0.15rem 0.45rem;border-radius:4px;font-size:0.82rem;">${bestRule.doc.check}</code>
+                </div>`;
             } else if (bestDef) {
-                summaryHTML = `<strong>${bestDef.doc.field}</strong> — ${bestDef.doc.definition}.`;
-                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#6b7280;">No active validation rule found for this field.</div>`;
+                summaryHTML = `<div style="font-size:1rem;line-height:1.75;color:#1e293b;">
+                    <strong>${bestDef.doc.field}</strong> — ${bestDef.doc.definition}.
+                    No active validation rule was found for this field.
+                </div>`;
             } else {
-                summaryHTML = `Rule: <strong>${bestRule.doc.rule_name.replace(/_/g,' ')}</strong> — ${bestRule.doc.description}`;
-                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#047857;font-weight:600;">&#9654; Formula: <code style="background:#dcfce7;padding:0.15rem 0.4rem;border-radius:4px;">${bestRule.doc.check}</code></div>`;
+                summaryHTML = `<div style="font-size:1rem;line-height:1.75;color:#1e293b;">
+                    Rule: <strong>${bestRule.doc.rule_name.replace(/_/g,' ')}</strong> — ${bestRule.doc.description}
+                </div>
+                <div style="margin-top:0.6rem;font-size:0.85rem;color:#047857;font-weight:600;">
+                    &#9654; Formula: <code style="background:#dcfce7;padding:0.15rem 0.45rem;border-radius:4px;">${bestRule.doc.check}</code>
+                </div>`;
             }
             summaryBox.innerHTML = summaryHTML;
 
-            // ── Evidence Cards ────────────────────────────────────────────────
-            finalHits.forEach(hit => {
+            // ── Evidence Cards (only what is genuinely relevant) ────────────────────────────────
+            [bestDef, bestRule].filter(Boolean).forEach(hit => {
                 const doc = hit.doc;
                 const card = document.createElement('div');
                 card.className = 'result-item';
-
                 let inner = '';
-                if (doc.type === 'definition') {
-                    inner = `
-                        <div class="result-source">&#128196; ${doc.source} &nbsp;&middot;&nbsp; <em style="font-weight:400;">${doc.section}</em></div>
-                        <div class="result-text" style="margin-top:0.5rem;">
-                            <span style="font-weight:700;color:#1e40af;font-size:1rem;">${doc.field}</span>
-                            &nbsp;&mdash;&nbsp; ${doc.definition}.
-                        </div>`;
-                } else {
-                    const typeLabels = { inequality:'Inequality check', sequential:'Sequential order check', conditional:'Conditional check' };
-                    const typeLabel = typeLabels[doc.rule_type] || 'Business rule';
-                    inner = `
-                        <div class="result-source">&#9989; ${doc.source} &nbsp;&middot;&nbsp; <em style="font-weight:400;">${typeLabel}</em></div>
-                        <div class="result-text" style="margin-top:0.5rem;">
-                            <span style="font-weight:700;color:#1e40af;font-size:1rem;">${doc.rule_name.replace(/_/g,' ')}</span><br>
-                            <span style="color:#374151;">${doc.description}</span><br>
-                            <span style="display:block;margin-top:0.4rem;font-size:0.85rem;color:#6b7280;">
-                                Formula: <code style="background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:4px;color:#1e293b;">${doc.check}</code>
-                            </span>
-                        </div>`;
-                }
 
+                if (doc.type === 'definition') {
+                    inner = `<div class="result-source">&#128196;&nbsp; ${doc.source}
+                                <span style="font-weight:400;color:#64748b;margin-left:0.5rem;">&middot; ${doc.section}</span>
+                             </div>
+                             <div class="result-text" style="margin-top:0.5rem;">
+                                <span style="font-weight:700;color:#1e40af;font-size:1rem;">${doc.field}</span>
+                                &nbsp;&mdash;&nbsp;${doc.definition}.
+                             </div>`;
+                } else {
+                    const typeLabels = { inequality:'Inequality constraint', sequential:'Sequential-order check', conditional:'Conditional check' };
+                    const typeLabel = typeLabels[doc.rule_type] || 'Business rule';
+                    inner = `<div class="result-source">&#9989;&nbsp; ${doc.source}
+                                <span style="font-weight:400;color:#64748b;margin-left:0.5rem;">&middot; ${typeLabel}</span>
+                             </div>
+                             <div class="result-text" style="margin-top:0.5rem;">
+                                <span style="font-weight:700;color:#1e40af;font-size:1rem;">${doc.rule_name.replace(/_/g,' ')}</span><br>
+                                <span style="color:#374151;line-height:1.65;">${doc.description}</span><br>
+                                <span style="display:block;margin-top:0.4rem;font-size:0.85rem;color:#6b7280;">
+                                    Formula:&nbsp;<code style="background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:4px;color:#1e293b;">${doc.check}</code>
+                                </span>
+                             </div>`;
+                }
                 card.innerHTML = inner;
                 resultsBox.appendChild(card);
             });
