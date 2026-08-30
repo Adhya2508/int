@@ -498,13 +498,14 @@ def main():
     <header>
         <div class="logo-container">
             <div class="logo-icon"></div>
-            <span class="logo-text">pragma loan analytics</span>
+            <span class="logo-text">Intain Loan Intelligence Engine</span>
         </div>
         <ul class="nav-links">
-            <li><a href="#summary">Dashboard</a></li>
-            <li><a href="#playground">Test Bench</a></li>
-            <li><a href="#dictionary">Dictionary</a></li>
-            <li><a href="#about">About System</a></li>
+            <li><a href="javascript:void(0)" onclick="switchTabNav('summary')">Executive Summary</a></li>
+            <li><a href="javascript:void(0)" onclick="switchTabNav('playground')">Live Test Bench</a></li>
+            <li><a href="javascript:void(0)" onclick="switchTabNav('competing')">Competing Risk</a></li>
+            <li><a href="javascript:void(0)" onclick="switchTabNav('drift')">Drift Monitoring</a></li>
+            <li><a href="javascript:void(0)" onclick="switchTabNav('rag-search')">Grounded RAG Engine</a></li>
         </ul>
     </header>
 
@@ -860,8 +861,15 @@ def main():
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
             
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.add('active');
+            if (btn) btn.classList.add('active');
+        }}
+
+        function switchTabNav(tabId) {{
+            const btns = Array.from(document.querySelectorAll('.sidebar-btn'));
+            const targetBtn = btns.find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + tabId + "'"));
+            switchTab(tabId, targetBtn);
         }}
 
         // LOAD METRIC LABELS
