@@ -1,11 +1,12 @@
 {
-  "reviewer_summary": "Loan ID 139436802 is flagged as a high-severity exception with an anomaly score of 0.9500 and a 'Severe Term Inconsistency' business rule hit.",
-  "why_flagged": "This record is flagged as highly suspicious because the implied loan term varies by >130 months across the historical timeline, violating validation rules.",
+  "reviewer_summary": "Loan ID 139436802 has a prepayment probability of 5.20% and is currently in the Accept decision band, indicating a low prepayment risk. However, it has been flagged due to severe term inconsistency and an anomaly score of 0.9500.",
+  "why_flagged": "The loan is flagged due to a 'Severe Term Inconsistency' which violates business rules, and the anomaly score of 0.9500 indicates potential irregularities in the loan profile. Additionally, model top feature drivers include 'remaining_months' and 'loan_age term mismatch', which may contribute to the flagged status.",
   "manual_checklists": [
-    "Investigate historical reporting data for term drift.",
-    "Verify the origination documents for the correct term structure."
+    "Verify the details of the severe term inconsistency.",
+    "Assess the implications of the anomaly score on loan performance.",
+    "Review the loan's remaining months and loan age for potential mismatches."
   ],
-  "confidence_level": "High",
-  "recommendation_label": "suspicious",
+  "confidence_level": "Medium",
+  "recommendation_label": "review",
   "disclaimer": "This is a machine-generated recommendation to assist the reviewer. The final decision must be made by a qualified credit analyst."
 }

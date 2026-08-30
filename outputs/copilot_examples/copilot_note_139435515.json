@@ -1,9 +1,10 @@
 {
-  "reviewer_summary": "Loan ID 139435515 is a borderline case with a prepayment probability of 14.20%, which is extremely close to the 14.86% risk threshold.",
-  "why_flagged": "Flagged due to marginal proximity to the prepayment risk threshold. Feature drivers are moderate and show no rule violations.",
+  "reviewer_summary": "Loan ID 139435515 has a credit score of 720, an LTV of 82%, and a DTI of 38%. The prepayment probability is 14.20%, which is below the prepayment risk threshold of 14.86%.",
+  "why_flagged": "The loan is flagged due to its prepayment probability of 14.20%, which is close to the risk threshold of 14.86%. The anomaly score of 0.4500 indicates a moderate level of concern, although there are no business rule violations or exception flags.",
   "manual_checklists": [
-    "Monitor next month's payment interest rate spread.",
-    "Check for recent credit inquiries."
+    "Verify the borrower's credit history and any recent changes in financial status.",
+    "Assess the impact of the loan's LTV and DTI ratios on overall risk.",
+    "Review the lagged performance features for any trends in delinquency or payment behavior."
   ],
   "confidence_level": "Medium",
   "recommendation_label": "review",

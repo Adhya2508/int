@@ -48,17 +48,31 @@ def load_dotenv():
 
 load_dotenv()
 
-# CLIENT INITIALIZATION (GROQ OpenAI Compatibility Endpoint)
-# Reads API key from OPENAI_API_KEY environment variable.
-API_KEY = os.environ.get("OPENAI_API_KEY")
-BASE_URL = "https://api.groq.com/openai/v1"
-MODEL_NAME = "groq/compound-mini"
+# CLIENT INITIALIZATION
+# Priority: OpenAI API (sk-*) > Groq API (gsk_*) > Mock mode
+OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
+GROQ_KEY   = os.environ.get("GROQ_API_KEY")
 
 client = None
-if API_KEY:
-    client = OpenAI(base_url=BASE_URL, api_key=API_KEY)
+MODEL_NAME = None
+
+if OPENAI_KEY and OPENAI_KEY.startswith("sk-"):
+    # Use real OpenAI API
+    client = OpenAI(api_key=OPENAI_KEY)
+    MODEL_NAME = "gpt-4o-mini"
+    print("Copilot using OpenAI API (gpt-4o-mini)")
+elif GROQ_KEY:
+    # Fallback to Groq
+    client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=GROQ_KEY)
+    MODEL_NAME = "llama-3.3-70b-versatile"
+    print("Copilot using Groq API (llama-3.3-70b-versatile)")
+elif OPENAI_KEY:
+    # Legacy: OPENAI_API_KEY holds a Groq key (gsk_*)
+    client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=OPENAI_KEY)
+    MODEL_NAME = "llama-3.3-70b-versatile"
+    print("Copilot using Groq API via legacy OPENAI_API_KEY")
 else:
-    print("WARNING: OPENAI_API_KEY environment variable not found. Copilot will run in Dry Run/Mock mode.")
+    print("WARNING: No API key found. Copilot will run in Dry Run/Mock mode.")
 
 # ---------------------------------------------------------------
 # GROUNDED PROMPT TEMPLATE

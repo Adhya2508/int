@@ -1,10 +1,10 @@
 {
-  "reviewer_summary": "Loan 139435503 originated in 2025Q1 with a credit score of 764, LTV of 89%, DTI of 35%, and an outstanding balance of $125,000. The model predicts a low prepayment probability of 0.95% (well below the 14.86% threshold) and assigns a low anomaly score of 0.1618.",
-  "why_flagged": "The loan is not flagged: it has no business rule violations, no exception flags, and the decision band status is Accept. The low prepayment risk and anomaly score indicate normal performance, and the top drivers (loan_age, remaining_months, low interest rate spread) align with expected behavior.",
+  "reviewer_summary": "Loan ID 139435503 has a credit score of 764, a loan-to-value ratio of 89%, and a debt-to-income ratio of 35%. The prepayment probability is low at 0.95%, and the decision band status is 'Accept'.",
+  "why_flagged": "The loan is considered normal as it does not have any business rule violations or exception flags. The anomaly score of 0.1618 is low, indicating no significant concerns.",
   "manual_checklists": [
-    "Verify the accuracy of the reported credit score, LTV, and DTI.",
-    "Confirm the lagged performance data (delinquency, UPB, interest rate) matches source systems.",
-    "Review any external factors not captured in the model that could affect prepayment behavior."
+    "Verify the accuracy of the credit score and DTI ratio.",
+    "Confirm the loan's origination balance and LTV ratio.",
+    "Review lagged performance features for any potential issues."
   ],
   "confidence_level": "High",
   "recommendation_label": "likely normal",

@@ -1,12 +1,10 @@
 {
-  "reviewer_summary": "Loan 139435505 (vintage 2025Q1) has a credit score of 764, LTV of 89%, DTI of 35% and an outstanding balance of $125,000. The model predicts a 22.88% prepayment probability, exceeding the 14.86% prepayment\u2011risk threshold.",
-  "why_flagged": "The loan is flagged under Decision Band Status = Flag_Prepay_Risk because its calibrated prepayment probability (22.88%) is above the prepayment\u2011risk threshold (14.86%). The anomaly score (0.6056) is moderate but not extreme. Top model drivers cited are loan_purpose_P and current_interest_rate_lag1, indicating that the loan purpose and recent interest\u2011rate level are influencing the elevated prepayment risk. No business\u2011rule violations or exception flags are present.",
+  "reviewer_summary": "Loan ID 139435505 has a prepayment probability of 22.88%, which exceeds the prepayment risk threshold of 14.86%. The borrower has a strong credit score of 764 and a DTI of 35%.",
+  "why_flagged": "This loan is flagged due to a prepayment risk status (Flag_Prepay_Risk) as the calibrated prepayment probability of 22.88% is significantly above the threshold of 14.86%. The anomaly score of 0.6056 indicates some level of concern.",
   "manual_checklists": [
-    "Validate the loan purpose category (loan_purpose_P) and assess its relevance to prepayment risk.",
-    "Confirm the current interest rate (not provided) and compare it to the lagged rate (6.12%).",
-    "Review the high LTV (89%) for any borrower\u2011level mitigation actions.",
-    "Examine borrower\u2019s intent and any upcoming refinancing opportunities that could drive prepayment.",
-    "Assess any recent changes in borrower\u2019s financial situation not captured in lagged features."
+    "Review the borrower's loan purpose and current interest rate.",
+    "Assess the implications of the high prepayment probability on loan performance.",
+    "Verify the borrower's financial stability given the LTV of 89%."
   ],
   "confidence_level": "Medium",
   "recommendation_label": "review",
