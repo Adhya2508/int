@@ -1,10 +1,11 @@
 {
-  "reviewer_summary": "Loan 139435503 originated in Q1 2025 with a credit score of 764, LTV of 89%, DTI of 35%, and a current UPB of $122,450. The model predicts a low prepayment probability of 0.95% (well below the 14.86% threshold) and an anomaly score of 0.1618.",
-  "why_flagged": "The loan is not flagged: there are no business rule violations, no exception flags, and the prepayment risk is comfortably within the acceptable band. Model top drivers (loan_age, remaining_months, low interest rate spread) align with normal performance expectations, and the low anomaly score indicates typical behavior.",
+  "reviewer_summary": "Loan ID 139435503 originated in Q1 2025 with a credit score of 764, LTV of 89%, DTI of 35%, and an original balance of $125,000. The model predicts a low prepayment probability of 0.95% (well below the 14.86% threshold) and an anomaly score of 0.1618.",
+  "why_flagged": "The loan is not flagged: there are no business rule violations, no exception flags, and the anomaly score is low. Model top drivers (loan_age, remaining_months, low interest rate spread) align with expected behavior, and the prepayment risk is comfortably within the Accept band.",
   "manual_checklists": [
-    "Verify the accuracy of the reported credit score, LTV, and DTI.",
-    "Confirm that the lagged performance data (delinquency = 0, UPB = $122,450, interest rate = 6.12%) matches the loan servicing records.",
-    "Review any recent borrower activity not captured in the current snapshot."
+    "Verify the reported credit score, LTV, and DTI against source documents.",
+    "Confirm the lagged performance values (delinquency = 0, UPB = $122,450, interest rate = 6.12%).",
+    "Ensure no hidden exceptions or data quality issues that were not captured by the anomaly score.",
+    "Review the model's top feature drivers (loan_age, remaining_months, low interest rate spread) for consistency with the loan's actual terms."
   ],
   "confidence_level": "High",
   "recommendation_label": "likely normal",

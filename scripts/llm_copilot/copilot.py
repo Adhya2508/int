@@ -32,6 +32,22 @@ os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(PROMPTS_LOG_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+def load_dotenv():
+    for path in [".env", "e:/intain/.env", "../../.env"]:
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            os.environ[k.strip()] = v.strip().strip('"').strip("'")
+                break
+            except Exception:
+                pass
+
+load_dotenv()
+
 # CLIENT INITIALIZATION (GROQ OpenAI Compatibility Endpoint)
 # Reads API key from OPENAI_API_KEY environment variable.
 API_KEY = os.environ.get("OPENAI_API_KEY")

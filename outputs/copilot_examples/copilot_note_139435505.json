@@ -1,12 +1,12 @@
 {
-  "reviewer_summary": "Loan 139435505 (vintage 2025Q1) has a strong credit score (764) but a high LTV (89%) and a calibrated prepayment probability of 22.88%, which exceeds the prepayment risk threshold of 14.86%. The decision band is Flag_Prepay_Risk.",
-  "why_flagged": "The loan is flagged due to its prepayment risk status: the model\u2011derived prepayment probability (22.88%) is well above the defined threshold (14.86%), triggering the Flag_Prepay_Risk band. The top feature drivers contributing to this outcome are the loan purpose (loan_purpose_P) and the current interest rate lagged by one period (current_interest_rate_lag1). No business rule violations or exception flags are present, and the anomaly score (0.6056) is moderate, not itself a trigger.",
+  "reviewer_summary": "Loan 139435505 (origination $125,000, credit score 764, LTV 89%, DTI 35%) shows a calibrated prepayment probability of 22.88% and an anomaly score of 0.6056.",
+  "why_flagged": "The loan is flagged under Decision Band Status = Flag_Prepay_Risk because its prepayment probability (22.88%) exceeds the prepayment risk threshold (14.86%). Model top drivers contributing to this risk are loan_purpose_P and the current_interest_rate_lag1. No business rule violations or exception flags are present, but the elevated anomaly score warrants attention.",
   "manual_checklists": [
-    "Validate the loan purpose classification (loan_purpose_P) and its relevance to prepayment behavior.",
-    "Confirm the current interest rate and its lagged value to ensure model inputs are accurate.",
-    "Assess the impact of the high LTV (89%) on potential refinancing or prepayment incentives.",
-    "Review borrower\u2019s payment history and any qualitative factors not captured in the model (e.g., employment stability).",
-    "Verify that no hidden anomalies or data quality issues exist despite the moderate anomaly score."
+    "Validate the loan purpose (loan_purpose_P) and assess its relevance to prepayment likelihood.",
+    "Review the current interest rate trend (current_interest_rate_lag1) and compare to market rates.",
+    "Confirm borrower\u2019s intent and any indications of upcoming refinance or sale.",
+    "Examine any additional performance history beyond the single lagged delinquency (t\u20111 = 0).",
+    "Assess whether the high LTV (89%) could influence prepayment behavior."
   ],
   "confidence_level": "Medium",
   "recommendation_label": "review",

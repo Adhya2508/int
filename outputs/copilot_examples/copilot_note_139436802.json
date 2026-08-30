@@ -1,14 +1,11 @@
 {
-  "reviewer_summary": "Loan 139436802 (2025Q1 vintage) has an accept decision with a calibrated prepayment probability of 5.20% (well below the 14.86% threshold), but it is flagged due to a high anomaly score (0.95) and a severe term\u2011inconsistency business rule violation.",
-  "why_flagged": "The loan is flagged because of: (1) Exception Flag Status = Flagged; (2) Business Rule Violation = Severe Term Inconsistency (Quarantined); (3) Anomaly Score = 0.9500 (near the maximum); and (4) Model top drivers highlight a mismatch between remaining_months and loan_age term. These signals outweigh the low prepayment risk and trigger a required human review.",
+  "reviewer_summary": "Loan ID 139436802 is flagged as a high-severity exception with an anomaly score of 0.9500 and a 'Severe Term Inconsistency' business rule hit.",
+  "why_flagged": "This record is flagged as highly suspicious because the implied loan term varies by >130 months across the historical timeline, violating validation rules.",
   "manual_checklists": [
-    "Validate the source and nature of the severe term inconsistency and why the loan was quarantined.",
-    "Inspect the anomaly score calculation and any underlying data quality issues.",
-    "Confirm the accuracy of static origination attributes (Credit Score 640, LTV 80%, DTI 42%).",
-    "Review lagged performance features (delinquency = 0, UPB = $215,400, interest rate = 6.38%) for any recent changes.",
-    "Check for missing or incomplete data not provided in the context (e.g., current balance, current interest rate, repayment schedule)."
+    "Investigate historical reporting data for term drift.",
+    "Verify the origination documents for the correct term structure."
   ],
-  "confidence_level": "Medium",
-  "recommendation_label": "review",
+  "confidence_level": "High",
+  "recommendation_label": "suspicious",
   "disclaimer": "This is a machine-generated recommendation to assist the reviewer. The final decision must be made by a qualified credit analyst."
 }
