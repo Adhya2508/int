@@ -41,22 +41,56 @@ def main():
     ci           = load_json("e:/intain/outputs/confidence_intervals/confidence_intervals.json")
     synthetic    = load_json("e:/intain/outputs/advanced_features/synthetic_stress_test.json")
     
-    # Load RAG documents
+    # Load RAG documents — pre-processed into clean structured objects
     rag_docs = []
+    import re
+
     dp_path = "e:/intain/data_dictionary.md"
     if os.path.exists(dp_path):
         with open(dp_path, "r", encoding="utf-8") as f:
+            current_section = "General"
             for line in f:
                 line = line.strip()
-                if line.startswith("*") and ":" in line:
-                    rag_docs.append({"source": "data_dictionary.md", "content": line})
-                    
+                if line.startswith("##"):
+                    current_section = line.lstrip("#").strip()
+                elif line.startswith("*") and "`" in line and ":" in line:
+                    # Parse: * `field_name`: Description text.
+                    m = re.match(r"\*\s+`([^`]+)`:\s*(.*)", line)
+                    if m:
+                        field = m.group(1).strip()
+                        definition = m.group(2).strip().rstrip(".")
+                        # Build keyword list from field name tokens
+                        keywords = [t.lower() for t in re.split(r"[_\s]+", field)]
+                        # Also include the section context words
+                        keywords += [t.lower() for t in re.split(r"[\W]+", current_section) if t]
+                        rag_docs.append({
+                            "type": "definition",
+                            "source": "Data Dictionary",
+                            "field": field,
+                            "section": current_section,
+                            "definition": definition,
+                            "keywords": keywords
+                        })
+
     vr_path = "e:/intain/validation_rules.json"
     if os.path.exists(vr_path):
         with open(vr_path, "r", encoding="utf-8") as f:
             rules = json.load(f)
             for k, v in rules.items():
-                rag_docs.append({"source": "validation_rules.json", "content": f"[{k}]: {json.dumps(v)}"})
+                keywords = [t.lower() for t in re.split(r"[_\s]+", k)]
+                # Add field-level keywords from the check expression
+                check_tokens = re.findall(r"[a-z_]+", v.get("check", "").lower())
+                keywords += check_tokens
+                keywords = list(set(keywords))
+                rag_docs.append({
+                    "type": "rule",
+                    "source": "Validation Rules",
+                    "rule_name": k,
+                    "description": v.get("description", ""),
+                    "check": v.get("check", ""),
+                    "rule_type": v.get("type", ""),
+                    "keywords": keywords
+                })
 
     # Load Active learning review queue
     al_queue = []
@@ -762,118 +796,97 @@ def main():
             tbody.appendChild(tr);
         }});
 
-        // GROUNDED RAG SEARCH
+        // GROUNDED RAG SEARCH — structured, deduped, human-readable
         function executeRAG() {{
-            const query = document.getElementById('ragQuery').value.toLowerCase().trim();
+            const raw = document.getElementById('ragQuery').value.toLowerCase().trim();
             const resultsBox = document.getElementById('ragResults');
             const summaryBox = document.getElementById('ragSummary');
-            
+
             resultsBox.innerHTML = '';
             summaryBox.style.display = 'none';
             summaryBox.innerHTML = '';
-            
-            if (!query) return;
-            
+
+            if (!raw) return;
+
+            // Tokenise query into meaningful words
+            const queryTokens = raw.split(/[\s_,]+/).filter(t => t.length > 1);
+
+            // Score each structured RAG doc against query tokens
             let matched = [];
             RAG_DOCS.forEach(doc => {{
+                const kws = (doc.keywords || []).map(k => k.toLowerCase());
+                const blob = ((doc.field || doc.rule_name || '') + ' ' + (doc.definition || doc.description || '')).toLowerCase();
                 let score = 0;
-                // Score overlap
-                query.split(' ').forEach(word => {{
-                    if (doc.content.toLowerCase().includes(word)) score += 2;
+                queryTokens.forEach(token => {{
+                    if (kws.includes(token)) score += 5;          // exact keyword hit
+                    if (blob.includes(token)) score += 2;         // substring hit
                 }});
-                // Extra weight if the whole query aligns exactly
-                if (doc.content.toLowerCase().includes(query)) score += 5;
-                
-                if (score > 0) {{
-                    matched.push({{ score, doc }});
-                }}
+                if (raw.length > 3 && blob.includes(raw)) score += 8; // full phrase bonus
+                if (score > 0) matched.push({{ score, doc }});
             }});
-            
+
             matched.sort((a, b) => b.score - a.score);
-            
-            // Deduplicate and filter down to top 1 dictionary definition and top 1 validation rule
-            let finalHits = [];
-            let seenTerms = new Set();
-            let dictCount = 0;
-            let ruleCount = 0;
-            
-            for (let hit of matched) {{
-                let term = "";
-                let isRule = hit.doc.source === "validation_rules.json";
-                
-                if (isRule) {{
-                    term = hit.doc.content.split(']: ')[0].split('[')[1];
-                    if (ruleCount >= 1) continue;
-                }} else {{
-                    const match = hit.doc.content.match(/\\* `([^`]+)`:/);
-                    if (match) {{
-                        term = match[1];
-                    }}
-                    if (dictCount >= 1) continue;
-                }}
-                
-                if (term) {{
-                    const uniqueKey = term + "_" + hit.doc.source;
-                    if (seenTerms.has(uniqueKey)) continue;
-                    seenTerms.add(uniqueKey);
-                }}
-                
-                finalHits.push(hit);
-                if (isRule) ruleCount++;
-                else dictCount++;
-                
-                if (finalHits.length >= 2) break;
+
+            // Keep only the best dictionary definition and best rule (no duplicates)
+            let bestDef = null, bestRule = null;
+            for (const hit of matched) {{
+                if (!bestDef && hit.doc.type === 'definition') bestDef = hit;
+                if (!bestRule && hit.doc.type === 'rule') bestRule = hit;
+                if (bestDef && bestRule) break;
             }}
-            
+
+            const finalHits = [bestDef, bestRule].filter(Boolean);
+
             if (finalHits.length === 0) {{
-                resultsBox.innerHTML = '<div class="result-item" style="color: #b91c1c; font-weight:600;">No strong match found. Try a more specific term (e.g. ltv, delinquency, balance_consistency).</div>';
+                resultsBox.innerHTML = '<div class="result-item" style="color:#b91c1c;font-weight:600;">No strong match found. Try a more specific term (e.g. ltv, delinquency, balance_consistency).</div>';
                 return;
             }}
-            
-            // Build Assistant Grounded Summary
+
+            // ── Grounded Summary (assembled from actual matched docs) ─────────
             summaryBox.style.display = 'block';
-            let summaryText = "";
-            let reviewerNote = "";
-            
-            if (query.includes("delinquency") || query.includes("progression")) {{
-                summaryText = "Delinquency status tracks the current payment stage. The rule requires delinquency to move gradually and not jump more than one month at a time.";
-                reviewerNote = "Reviewers must flag jumps of >1 delinquency stage in a single reporting cycle to catch servicing errors.";
-            }} else if (query.includes("upb") || query.includes("balance") || query.includes("consistency")) {{
-                summaryText = "Unpaid Principal Balance (UPB) represents the outstanding principal of the loan. The balance consistency rule checks that UPB does not exceed original balance + tolerance.";
-                reviewerNote = "Manually check if current UPB exceeds origination balance to flag payment posting issues.";
-            }} else if (query.includes("zero_balance") || query.includes("prepaid") || query.includes("status")) {{
-                summaryText = "Zero Balance Code details the disposition reason (prepaid, short sale, REO). The prepaid status rule checks that zero_balance_code is populated if UPB is 0.";
-                reviewerNote = "Verify correct prepay flag mapping when zero_balance_code is 01.";
+            let summaryHTML = '';
+            if (bestDef && bestRule) {{
+                summaryHTML = `<strong>${{bestDef.doc.field}}</strong> — ${{bestDef.doc.definition}}. Business rule: ${{bestRule.doc.description}}`;
+                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#047857;font-weight:600;">&#9654; Reviewer note: Check formula <code style="background:#dcfce7;padding:0.15rem 0.4rem;border-radius:4px;">${{bestRule.doc.check}}</code></div>`;
+            }} else if (bestDef) {{
+                summaryHTML = `<strong>${{bestDef.doc.field}}</strong> — ${{bestDef.doc.definition}}.`;
+                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#6b7280;">No active validation rule found for this field.</div>`;
             }} else {{
-                summaryText = "Data dictionary rows and business validation rule bounds are active for this attribute.";
-                reviewerNote = "Verify matching source cards for verification rules.";
+                summaryHTML = `Rule: <strong>${{bestRule.doc.rule_name.replace(/_/g,' ')}}</strong> — ${{bestRule.doc.description}}`;
+                summaryHTML += `<div style="margin-top:0.5rem;font-size:0.85rem;color:#047857;font-weight:600;">&#9654; Formula: <code style="background:#dcfce7;padding:0.15rem 0.4rem;border-radius:4px;">${{bestRule.doc.check}}</code></div>`;
             }}
-            
-            summaryBox.innerHTML = `<strong>Assistant Grounded Summary:</strong> ${{summaryText}}<br><small style="color:#047857; font-weight:600;">Reviewer Action Note: ${{reviewerNote}}</small>`;
-            
-            // Render clean evidence cards
+            summaryBox.innerHTML = summaryHTML;
+
+            // ── Evidence Cards ────────────────────────────────────────────────
             finalHits.forEach(hit => {{
-                const item = document.createElement('div');
-                item.className = 'result-item';
-                
-                let contentText = hit.doc.content;
-                if (hit.doc.source === 'validation_rules.json') {{
-                    try {{
-                        const rawJson = hit.doc.content.split(']: ')[1];
-                        const keyName = hit.doc.content.split(']: ')[0].split('[')[1];
-                        const ruleObj = JSON.parse(rawJson);
-                        contentText = `<strong>Validation Rule Constraint:</strong> ${{keyName}}<br><strong>Description:</strong> ${{ruleObj.description}}<br><strong>Check Rule Formula:</strong> <code>${{ruleObj.check}}</code>`;
-                    }} catch(e) {{}}
+                const doc = hit.doc;
+                const card = document.createElement('div');
+                card.className = 'result-item';
+
+                let inner = '';
+                if (doc.type === 'definition') {{
+                    inner = `
+                        <div class="result-source">&#128196; ${{doc.source}} &nbsp;&middot;&nbsp; <em style="font-weight:400;">${{doc.section}}</em></div>
+                        <div class="result-text" style="margin-top:0.5rem;">
+                            <span style="font-weight:700;color:#1e40af;font-size:1rem;">${{doc.field}}</span>
+                            &nbsp;&mdash;&nbsp; ${{doc.definition}}.
+                        </div>`;
                 }} else {{
-                    contentText = contentText.replace("Data Dictionary Row: * ", "").replace(/`/g, "");
-                    contentText = `<strong>Field Definition:</strong> ${{contentText}}`;
+                    const typeLabels = {{ inequality:'Inequality check', sequential:'Sequential order check', conditional:'Conditional check' }};
+                    const typeLabel = typeLabels[doc.rule_type] || 'Business rule';
+                    inner = `
+                        <div class="result-source">&#9989; ${{doc.source}} &nbsp;&middot;&nbsp; <em style="font-weight:400;">${{typeLabel}}</em></div>
+                        <div class="result-text" style="margin-top:0.5rem;">
+                            <span style="font-weight:700;color:#1e40af;font-size:1rem;">${{doc.rule_name.replace(/_/g,' ')}}</span><br>
+                            <span style="color:#374151;">${{doc.description}}</span><br>
+                            <span style="display:block;margin-top:0.4rem;font-size:0.85rem;color:#6b7280;">
+                                Formula: <code style="background:#f1f5f9;padding:0.15rem 0.5rem;border-radius:4px;color:#1e293b;">${{doc.check}}</code>
+                            </span>
+                        </div>`;
                 }}
-                
-                item.innerHTML = `
-                    <div class="result-source">${{hit.doc.source}}</div>
-                    <div class="result-text">${{contentText}}</div>
-                `;
-                resultsBox.appendChild(item);
+
+                card.innerHTML = inner;
+                resultsBox.appendChild(card);
             }});
         }}
 
