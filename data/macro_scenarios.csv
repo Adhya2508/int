@@ -1,0 +1,4 @@
+scenario_id,unemployment_rate,hpi_growth,interest_rate
+Base,0.04,0.03,0.06
+Adverse,0.08,-0.05,0.07
+High-Prepay,0.03,0.06,0.04

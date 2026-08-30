@@ -1,0 +1,2 @@
+loan_id,reporting_period,prob_default,prob_prepay,next_state,exception_type,anomaly_score,top_drivers,action,confidence
+EXAMPLE1,012026,0.05,0.15,Current,None,0.01,"credit_score, ltv",Accept,0.95

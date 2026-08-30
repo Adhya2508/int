@@ -1,0 +1,4 @@
+Target strategy:
+  1. next_12m_prepayment_flag (Binary classification, 7.93% positive rate, 11.6:1 imbalance ratio)
+  2. next_state (Multi-class: Current, Prepaid, Unknown)
+  3. Default/delinquency targets: deferred due to zero positives in this dataset vintage.

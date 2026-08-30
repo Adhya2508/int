@@ -1,0 +1,45 @@
+=================================================================
+MODEL CARD: LOAN PERFORMANCE PREPAYMENT ENGINE
+=================================================================
+
+1. Objective:
+   Predict the probability that a single-family mortgage will prepay 
+   (UPB reaches 0) within the next 12 months (next_12m_prepayment_flag).
+
+2. Target Definition:
+   - next_12m_prepayment_flag: 1 if loan terminates with zero UPB in 
+     reporting months t+1 to t+12; 0 otherwise.
+
+3. Features Used:
+   - Lagged Monthly Performance (t-1): current_upb_lag1, delinquency_status_lag1, current_interest_rate_lag1
+   - Current Temporal: loan_age, remaining_months
+   - Static Origination: orig_upb, credit_score, ltv, dti, state, loan_purpose, property_type, vintage
+   - Derived: upb_pct_of_orig, term_pct_elapsed
+
+4. Validation Scheme:
+   - Time-Aware split to respect panel chronology:
+     - Train: Jan 2025 - Sep 2025 (374,275 rows)
+     - Validation: Oct 2025 - Nov 2025 (93,395 rows)
+     - Test (Holdout): Dec 2025 (32,176 rows)
+
+5. Leakage Controls:
+   - Same-row delinquency_status and current_upb are strictly LAGGED by 1 month.
+   - zero_balance_code is completely EXCLUDED (post-event indicator).
+   - Training set filtered to dates strictly before the test period to prevent future-data overlap.
+
+6. Performance Metrics (Validation Set):
+   - Baseline (Logistic Regression):
+     * ROC-AUC:  0.7327
+     * PR-AUC:   0.1259
+     * Brier:    0.1735
+   - Improved Model (XGBoost Calibrated):
+     * ROC-AUC:  0.8116
+     * PR-AUC:   0.2191
+     * Brier:    0.0485
+     * F1-Score: 0.2899 (at threshold 0.1486)
+     * Precision: 0.2199
+     * Recall:    0.4253
+
+7. Limitations:
+   - Delinquency/Default targets are non-viable (0 positive examples in vintage).
+   - Servicer updates file excluded from modeling due to 100% null delinquency and same-row leakage.

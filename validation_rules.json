@@ -1,0 +1,17 @@
+{
+    "balance_consistency": {
+        "description": "Current UPB cannot be greater than original balance + tolerance.",
+        "type": "inequality",
+        "check": "current_upb <= orig_balance * 1.05"
+    },
+    "delinquency_progression": {
+        "description": "Delinquency status cannot jump more than 1 month at a time.",
+        "type": "sequential",
+        "check": "delinquency_status(t) <= delinquency_status(t-1) + 1"
+    },
+    "closed_prepaid_status": {
+        "description": "If UPB is 0, zero_balance_code must be populated.",
+        "type": "conditional",
+        "check": "if current_upb == 0 then zero_balance_code is not null"
+    }
+}

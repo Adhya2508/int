@@ -1,0 +1,20 @@
+# Ignore the huge raw input data file
+data/2025Q1.csv
+
+# Ignore large intermediate cleaned files to prevent push delays or limits
+data_cleaned/
+
+# Keep final outputs and logs
+!data_final/submission.csv
+!data_final/outputs/
+!data_final/logs/
+
+# Python cache and temporary files
+__pycache__/
+*.pyc
+check_packages.py
+inspect_periods.py
+inspect_dates_count.py
+inspect_data.py
+report_output.txt
+report_output.html

@@ -1,0 +1,1 @@
+Servicer file excluded from modeling. delinquency_status is 100% null; current_upb is same-period leakage.

@@ -1,0 +1,3 @@
+task,description,rows_affected
+C0,Filtered out train rows with reporting_date >= 2025-12-01 to fix temporal leakage,93395
+4b,"Added derived features: upb_pct_of_orig, term_pct_elapsed",406451
