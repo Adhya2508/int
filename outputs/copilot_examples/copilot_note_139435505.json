@@ -1,12 +1,12 @@
 {
-  "reviewer_summary": "Loan 139435505 (origination $125,000, credit score 764, LTV 89%, DTI 35%) shows a calibrated prepayment probability of 22.88% and an anomaly score of 0.6056.",
-  "why_flagged": "The loan is flagged under Decision Band Status = Flag_Prepay_Risk because its prepayment probability (22.88%) exceeds the prepayment risk threshold (14.86%). Model top drivers contributing to this risk are loan_purpose_P and the current_interest_rate_lag1. No business rule violations or exception flags are present, but the elevated anomaly score warrants attention.",
+  "reviewer_summary": "Loan 139435505 (vintage 2025Q1) has a credit score of 764, LTV of 89%, DTI of 35% and an outstanding balance of $125,000. The model predicts a 22.88% prepayment probability, exceeding the 14.86% prepayment\u2011risk threshold.",
+  "why_flagged": "The loan is flagged under Decision Band Status = Flag_Prepay_Risk because its calibrated prepayment probability (22.88%) is above the prepayment\u2011risk threshold (14.86%). The anomaly score (0.6056) is moderate but not extreme. Top model drivers cited are loan_purpose_P and current_interest_rate_lag1, indicating that the loan purpose and recent interest\u2011rate level are influencing the elevated prepayment risk. No business\u2011rule violations or exception flags are present.",
   "manual_checklists": [
-    "Validate the loan purpose (loan_purpose_P) and assess its relevance to prepayment likelihood.",
-    "Review the current interest rate trend (current_interest_rate_lag1) and compare to market rates.",
-    "Confirm borrower\u2019s intent and any indications of upcoming refinance or sale.",
-    "Examine any additional performance history beyond the single lagged delinquency (t\u20111 = 0).",
-    "Assess whether the high LTV (89%) could influence prepayment behavior."
+    "Validate the loan purpose category (loan_purpose_P) and assess its relevance to prepayment risk.",
+    "Confirm the current interest rate (not provided) and compare it to the lagged rate (6.12%).",
+    "Review the high LTV (89%) for any borrower\u2011level mitigation actions.",
+    "Examine borrower\u2019s intent and any upcoming refinancing opportunities that could drive prepayment.",
+    "Assess any recent changes in borrower\u2019s financial situation not captured in lagged features."
   ],
   "confidence_level": "Medium",
   "recommendation_label": "review",

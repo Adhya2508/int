@@ -227,7 +227,7 @@ task1_report = task1_template \
     .replace("__DQ_MEAN__", f"{scores.mean():.4%}") \
     .replace("__DQ_MEDIAN__", f"{scores.median():.4%}")
 
-with open("e:/intain/data_intelligence_report.md", "w") as f:
+with open("e:/intain/reports/data_intelligence_report.md", "w") as f:
     f.write(task1_report)
 
 # ===============================================================
@@ -351,7 +351,7 @@ task3_report = task3_template \
     .replace("__AUC_XGB__", f"{surv_auc_xgb:.4f}") \
     .replace("__PLOT_PATH__", os.path.abspath(os.path.join(OUTPUT_DIR, "survival_curves.png")).replace('\\', '/'))
 
-with open("e:/intain/survival_report.md", "w") as f:
+with open("e:/intain/reports/survival_report.md", "w") as f:
     f.write(task3_report)
 
 # ===============================================================
@@ -466,7 +466,7 @@ task4_report = task4_template \
     .replace("__TYPE_SUMMARY__", "\n".join(type_summary_rows)) \
     .replace("__TABLE_ROWS__", "\n".join(top_20_rows))
 
-with open("e:/intain/anomaly_report.md", "w") as f:
+with open("e:/intain/reports/anomaly_report.md", "w") as f:
     f.write(task4_report)
 
 # ===============================================================
@@ -574,7 +574,7 @@ task5_report = task5_template \
     .replace("__VINTAGE_SUMMARY__", vintage_str) \
     .replace("__STATE_SUMMARY__", state_str)
 
-with open("e:/intain/scenario_report.md", "w") as f:
+with open("e:/intain/reports/scenario_report.md", "w") as f:
     f.write(task5_report)
 
 # ===============================================================
@@ -705,7 +705,7 @@ task6_report = task6_template \
     .replace("__LOAN_B_DECISION__", loan_b_decision) \
     .replace("__FP_FN_TABLE__", "\n".join(fp_fn_rows))
 
-with open("e:/intain/explainability_report.md", "w") as f:
+with open("e:/intain/reports/explainability_report.md", "w") as f:
     f.write(task6_report)
 
 print("Pipeline executed successfully. All reports generated.")

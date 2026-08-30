@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-08-30",
+  "folder_map": {
+    "scripts/advanced_features/": "Contains pipelines for calculating advanced metrics (run_advanced_features.py, generate_dashboard.py).",
+    "dashboard/advanced_features/": "Contains the self-contained HTML visual dashboard.html.",
+    "reports/advanced_features/": "Technical summary markdown reports.",
+    "outputs/monte_carlo/": "Monte Carlo portfolio simulation outputs.",
+    "outputs/monitoring/": "Covariate drift metrics (PSI results).",
+    "outputs/calibration/": "Subgroup expected calibration loss scores.",
+    "outputs/fairness/": "TPR bias audits across segments.",
+    "outputs/active_learning/": "Priority review queue datasets.",
+    "logs/experiment_tracking/": "Registry of modeling runs and orchestrator runner logs.",
+    "logs/rag/": "Local RAG query history logs."
+  }
+}

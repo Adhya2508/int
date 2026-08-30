@@ -338,7 +338,20 @@ test_df['anomaly_score'] = test_anom_scores
 test_df['uncertainty_score'] = 1.0 - np.abs(test_probs - 0.1486)
 test_df['active_learning_priority'] = 0.5 * test_df['uncertainty_score'] + 0.5 * test_df['anomaly_score']
 
-priority_queue = test_df.sort_values(by='active_learning_priority', ascending=False)[['loan_id', 'credit_score', 'ltv', 'dti', 'prob_base', 'anomaly_score', 'active_learning_priority']].head(50)
+# Define a reviewer note generator based on profile metrics
+def generate_review_note(row):
+    reasons = []
+    if row['anomaly_score'] > 0.8:
+        reasons.append("High statistical anomaly index: verify historical timeline for implied term inconsistencies.")
+    if row['prob_base'] > 0.1486:
+        reasons.append("Prepayment risk threshold exceeded: inspect refinance interest rate spread.")
+    else:
+        reasons.append("Borderline decision confidence: check recent borrower credit inquiries.")
+    return " | ".join(reasons)
+
+test_df['reviewer_note'] = test_df.apply(generate_review_note, axis=1)
+
+priority_queue = test_df.sort_values(by='active_learning_priority', ascending=False)[['loan_id', 'credit_score', 'ltv', 'dti', 'prob_base', 'anomaly_score', 'active_learning_priority', 'reviewer_note']].head(50)
 priority_queue.to_csv("e:/intain/outputs/advanced_features/active_learning_queue.csv", index=False)
 
 # ---------------------------------------------------------------

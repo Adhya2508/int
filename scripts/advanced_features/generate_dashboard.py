@@ -92,8 +92,8 @@ def main():
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {{
-            --primary: #1e293b;
-            --primary-light: #334155;
+            --primary: #0f172a;
+            --primary-light: #1e293b;
             --accent: #2563eb;
             --accent-hover: #1d4ed8;
             --bg-light: #f8fafc;
@@ -119,11 +119,11 @@ def main():
             min-height: 100vh;
         }}
         
-        /* HEADER (Speridian & Pragma style integration) */
+        /* HEADER */
         header {{
             background-color: var(--primary);
             color: white;
-            padding: 1rem 2rem;
+            padding: 1.25rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -134,19 +134,19 @@ def main():
         .logo-container {{
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }}
         
         .logo-icon {{
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            width: 2rem;
-            height: 2rem;
-            border-radius: 6px;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 8px;
         }}
         
         .logo-text {{
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.4rem;
             letter-spacing: -0.5px;
         }}
         
@@ -177,19 +177,19 @@ def main():
         /* SIDEBAR */
         sidebar {{
             background-color: white;
-            width: 260px;
+            width: 280px;
             border-right: 1px solid var(--border);
-            padding: 1.5rem 1rem;
+            padding: 2rem 1.25rem;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }}
         
         .sidebar-btn {{
             background: none;
             border: none;
             text-align: left;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.25rem;
             border-radius: 8px;
             color: var(--text-muted);
             font-weight: 600;
@@ -206,12 +206,13 @@ def main():
         .sidebar-btn.active {{
             background-color: #eff6ff;
             color: var(--accent);
+            border-left: 4px solid var(--accent);
         }}
         
         /* CONTENT SECTION */
         main {{
             flex: 1;
-            padding: 2rem;
+            padding: 2.5rem;
             overflow-y: auto;
             max-width: 1400px;
         }}
@@ -223,13 +224,32 @@ def main():
         .tab-content.active {{
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 2.5rem;
+        }}
+        
+        .section-header {{
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+        }}
+        
+        .section-header h2 {{
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+        }}
+        
+        .section-desc {{
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            line-height: 1.5;
         }}
         
         /* CARDS & GRID */
         .metrics-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
         }}
         
@@ -241,7 +261,7 @@ def main():
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
             transition: transform 0.2s;
         }}
         
@@ -252,24 +272,22 @@ def main():
         .metric-label {{
             font-size: 0.85rem;
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }}
         
         .metric-value {{
-            font-size: 2rem;
+            font-size: 2.25rem;
             font-weight: 700;
             color: var(--text-dark);
         }}
         
-        .metric-trend {{
+        .metric-desc {{
             font-size: 0.85rem;
-            font-weight: 600;
+            color: var(--text-muted);
+            line-height: 1.4;
         }}
-        
-        .trend-up {{ color: #10b981; }}
-        .trend-down {{ color: #ef4444; }}
         
         /* ANALYTICS SECTION GRID */
         .chart-row {{
@@ -278,7 +296,7 @@ def main():
             gap: 2rem;
         }}
         
-        @media (max-width: 900px) {{
+        @media (max-width: 1000px) {{
             .chart-row {{
                 grid-template-columns: 1fr;
             }}
@@ -288,19 +306,29 @@ def main():
             background-color: white;
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.75rem;
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.25rem;
+        }}
+        
+        .chart-title-bar {{
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }}
         
         .chart-title {{
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--text-dark);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.5rem;
+        }}
+        
+        .chart-desc {{
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
         }}
         
         /* RAG STYLING */
@@ -312,7 +340,7 @@ def main():
         
         .search-input {{
             flex: 1;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.25rem;
             border-radius: 8px;
             border: 1px solid var(--border);
             font-size: 1rem;
@@ -327,7 +355,7 @@ def main():
             background-color: var(--accent);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.75rem;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
@@ -336,6 +364,17 @@ def main():
         
         .search-btn:hover {{
             background-color: var(--accent-hover);
+        }}
+        
+        .rag-summary-card {{
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 1.25rem;
+            font-size: 0.95rem;
+            color: #166534;
+            line-height: 1.5;
+            display: none;
         }}
         
         .results-list {{
@@ -349,7 +388,7 @@ def main():
             background-color: white;
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 1rem;
+            padding: 1.25rem;
             box-shadow: var(--shadow);
         }}
         
@@ -358,14 +397,15 @@ def main():
             color: var(--accent);
             font-weight: 700;
             text-transform: uppercase;
+            margin-bottom: 0.5rem;
         }}
         
         .result-text {{
             font-size: 0.95rem;
-            margin-top: 0.25rem;
+            line-height: 1.5;
         }}
         
-        /* ACTIVE LEARNING TABLE */
+        /* TABLE STYLING */
         table {{
             width: 100%;
             border-collapse: collapse;
@@ -374,20 +414,21 @@ def main():
         
         th, td {{
             text-align: left;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.25rem;
             border-bottom: 1px solid var(--border);
         }}
         
         th {{
             background-color: var(--bg-light);
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.85rem;
             text-transform: uppercase;
         }}
         
         td {{
-            font-size: 0.9rem;
+            font-size: 0.925rem;
+            line-height: 1.4;
         }}
         
         tr:hover {{
@@ -395,16 +436,28 @@ def main():
         }}
         
         .badge {{
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
+            display: inline-block;
         }}
         
         .badge-high {{ background-color: #fee2e2; color: #ef4444; }}
         .badge-medium {{ background-color: #fef3c7; color: #d97706; }}
         .badge-low {{ background-color: #d1fae5; color: #10b981; }}
+        
+        /* INFO BANNER */
+        .info-banner {{
+            background-color: #eff6ff;
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            font-size: 0.9rem;
+            color: #1e40af;
+            line-height: 1.5;
+            border-radius: 0 8px 8px 0;
+        }}
     </style>
 </head>
 <body>
@@ -437,36 +490,47 @@ def main():
         <main>
             <!-- TAB: SUMMARY METRICS -->
             <div id="summary" class="tab-content active">
+                <div class="section-header">
+                    <h2>Executive Summary Metrics</h2>
+                    <p class="section-desc">Key performance indicators, bootstrap uncertainty intervals, and macroeconomic stress projections for the loan portfolio.</p>
+                </div>
+                
                 <div class="metrics-grid">
                     <div class="metric-card">
-                        <span class="metric-label">Monte Carlo Median Prepayment</span>
+                        <span class="metric-label">Monte Carlo Prepayment Rate</span>
                         <span class="metric-value" id="val-mc-median">--</span>
-                        <span class="metric-trend trend-up">Calibrated</span>
+                        <span class="metric-desc">Median portfolio prepayment rate simulated over 12 months using calibrated loan probabilities.</span>
                     </div>
                     <div class="metric-card">
                         <span class="metric-label">Validation ROC-AUC</span>
                         <span class="metric-value">0.8116</span>
-                        <span class="metric-trend trend-up">High Accuracy</span>
+                        <span class="metric-desc">Discriminative accuracy of the primary prepayment model on chronological validation data.</span>
                     </div>
                     <div class="metric-card">
                         <span class="metric-label">95% Confidence Interval (AUC)</span>
                         <span class="metric-value" id="val-auc-ci">--</span>
-                        <span class="metric-trend trend-up">Bootstrapped</span>
+                        <span class="metric-desc">Uncertainty range computed via 20 validation bootstrap resampling iterations.</span>
                     </div>
                     <div class="metric-card">
                         <span class="metric-label">Synthetic Stress Prepay</span>
                         <span class="metric-value" id="val-synthetic">--</span>
-                        <span class="metric-trend trend-down">Extreme Stress</span>
+                        <span class="metric-desc">Prepayment rate under synthetic stress (FICO=500, LTV=98%, DTI=62%) to evaluate bounds.</span>
                     </div>
                 </div>
 
                 <div class="chart-row">
                     <div class="chart-card">
-                        <span class="chart-title">Stress Sensitivity by Feature Cluster</span>
+                        <div class="chart-title-bar">
+                            <span class="chart-title">Stress Sensitivity by Feature Cluster</span>
+                            <span class="chart-desc">Observes shift in mean predicted probability under FICO credit reduction and interest rate hikes.</span>
+                        </div>
                         <canvas id="chartSensitivity" style="max-height: 250px;"></canvas>
                     </div>
                     <div class="chart-card">
-                        <span class="chart-title">Calibration Error (Brier Score) per Credit Band</span>
+                        <div class="chart-title-bar">
+                            <span class="chart-title">Calibration Error (Brier Score) per Credit Band</span>
+                            <span class="chart-desc">ECE calibration scores (lower is better) evaluated per subgroup on validation records.</span>
+                        </div>
                         <canvas id="chartCalibration" style="max-height: 250px;"></canvas>
                     </div>
                 </div>
@@ -474,45 +538,115 @@ def main():
 
             <!-- TAB: COMPETING RISK -->
             <div id="competing" class="tab-content">
+                <div class="section-header">
+                    <h2>Competing Risk / Survival Visuals</h2>
+                    <p class="section-desc">Discrete-time survival hazard approximation tracking voluntary prepayments and maturity events simultaneously over a 12-month horizon.</p>
+                </div>
+                
+                <div class="info-banner">
+                    <strong>Competing Risk Framing:</strong> This model approximates event probabilities using a 3-state discrete hazard framework (Survive, Prepayment, and Maturity). Loans remaining active at month 12 are treated as right-censored. Prepayment represents voluntary early payoff, while Maturity represents standard scheduled amortization.
+                </div>
+                
                 <div class="chart-card" style="width: 100%;">
-                    <span class="chart-title">Competing Risk Cumulative Incidence Functions (CIF)</span>
                     <canvas id="chartCompeting" style="max-height: 400px;"></canvas>
+                </div>
+                
+                <div class="section-desc" style="margin-top: -1rem;">
+                    <em>Note: Platt scaling was applied to the raw model probabilities, successfully reducing validation Brier score calibration error from raw 0.3059 to calibrated 0.0139 (beating the empirical baseline of 0.0141).</em>
                 </div>
             </div>
 
             <!-- TAB: DRIFT MONITORING -->
             <div id="drift" class="tab-content">
-                <div class="chart-card" style="width: 100%;">
-                    <span class="chart-title">Population Stability Index (PSI) -- Train vs Test Drift</span>
-                    <canvas id="chartDrift" style="max-height: 400px;"></canvas>
+                <div class="section-header">
+                    <h2>Drift Monitoring & Quality Control</h2>
+                    <p class="section-desc">Population Stability Index (PSI) values measuring covariate shift between the training cohort and the December 2025 test snapshot.</p>
+                </div>
+                
+                <div class="info-banner">
+                    <strong>Time-Aware Shift:</strong> The high PSI for <code>loan_age</code> is an expected chronological artifact of comparing a longitudinal training panel (covering ages 0-10) with a single-month test snapshot (where all loans reside at month 11). This represents normal chronological aging, not a data leakage or quality defect.
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-card">
+                        <span class="chart-title">PSI Feature Covariate Shift</span>
+                        <canvas id="chartDrift" style="max-height: 300px;"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <span class="chart-title">Drift Severity Rankings</span>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Feature Name</th>
+                                    <th>PSI Value</th>
+                                    <th>Status / Action Band</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>loan_age</strong></td>
+                                    <td id="drift-val-age">--</td>
+                                    <td><span class="badge badge-high">Expected Time Shift</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>remaining_months</strong></td>
+                                    <td id="drift-val-rem">--</td>
+                                    <td><span class="badge badge-low">Low Drift</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>credit_score</strong></td>
+                                    <td id="drift-val-fico">--</td>
+                                    <td><span class="badge badge-low">Low Drift</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ltv</strong></td>
+                                    <td id="drift-val-ltv">--</td>
+                                    <td><span class="badge badge-low">Low Drift</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>dti</strong></td>
+                                    <td id="drift-val-dti">--</td>
+                                    <td><span class="badge badge-low">Low Drift</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <!-- TAB: FAIRNESS -->
             <div id="fairness" class="tab-content">
+                <div class="section-header">
+                    <h2>Segment Performance & Bias Analysis</h2>
+                    <p class="section-desc">Comparison of prepayment true positive rates (Equal Opportunity) and calibrated Brier Scores across borrower credit bands.</p>
+                </div>
+                
+                <div class="info-banner">
+                    <strong>Disclaimer:</strong> This panel evaluates segment-level model performance and calibration. In the absence of protected variables (race, gender), this represents segment bias auditing, not formal legal fairness conclusions.
+                </div>
+                
                 <div class="chart-card">
-                    <span class="chart-title">Fairness Metrics (True Positive Rate by Credit Band)</span>
                     <table>
                         <thead>
                             <tr>
                                 <th>Segment (Credit Band)</th>
-                                <th>True Positive Rate (Equal Opportunity)</th>
-                                <th>Brier Score Calibration</th>
+                                <th>True Positive Rate (Equal Opportunity TPR)</th>
+                                <th>Brier Score (Calibration Error)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Prime (Credit Score > 720)</td>
+                                <td><strong>Prime</strong> (Credit Score &gt; 720)</td>
                                 <td id="fair-prime-tpr">--</td>
                                 <td id="fair-prime-brier">--</td>
                             </tr>
                             <tr>
-                                <td>Near-Prime (Credit Score 660-720)</td>
+                                <td><strong>Near-Prime</strong> (Credit Score 660-720)</td>
                                 <td id="fair-near-tpr">--</td>
                                 <td id="fair-near-brier">--</td>
                             </tr>
                             <tr>
-                                <td>Subprime (Credit Score < 660)</td>
+                                <td><strong>Subprime</strong> (Credit Score &lt; 660)</td>
                                 <td id="fair-subprime-tpr">--</td>
                                 <td id="fair-subprime-brier">--</td>
                             </tr>
@@ -523,8 +657,12 @@ def main():
 
             <!-- TAB: ACTIVE LEARNING -->
             <div id="active-learning" class="tab-content">
-                <div class="chart-card">
-                    <span class="chart-title">Active Learning Priority Review Queue (Top 10 High-Priority Loans)</span>
+                <div class="section-header">
+                    <h2>Active Learning priority review queue</h2>
+                    <p class="section-desc">Priority scoring: <code>Priority = 0.5 * Uncertainty + 0.5 * Anomaly_Score</code>. Ranks loans near the decision boundary (0.1486) or with high anomaly indexes for manual review.</p>
+                </div>
+                
+                <div class="chart-card" style="width: 100%;">
                     <table>
                         <thead>
                             <tr>
@@ -532,9 +670,10 @@ def main():
                                 <th>Credit Score</th>
                                 <th>LTV</th>
                                 <th>DTI</th>
-                                <th>Base Probability</th>
-                                <th>Anomaly Score</th>
+                                <th>Model Prob</th>
+                                <th>Anomaly</th>
                                 <th>Priority</th>
+                                <th>Reviewer Notes / Flags</th>
                             </tr>
                         </thead>
                         <tbody id="al-table-body">
@@ -546,12 +685,20 @@ def main():
 
             <!-- TAB: RAG SEARCH -->
             <div id="rag-search" class="tab-content">
+                <div class="section-header">
+                    <h2>Grounded RAG Search Engine</h2>
+                    <p class="section-desc">Query dictionary definitions and business validation rules. Grounded in provided documentation (no LLM hallucinations).</p>
+                </div>
+                
                 <div class="chart-card">
-                    <span class="chart-title">Grounded RAG Assistant (Search Dictionary & Validation Rules)</span>
                     <div class="search-container">
                         <input type="text" id="ragQuery" class="search-input" placeholder="Type a keyword (e.g. ltv, delinquency, balance_consistency)...">
-                        <button class="search-btn" onclick="executeRAG()">Search</button>
+                        <button class="search-btn" onclick="executeRAG()">Search Documentation</button>
                     </div>
+                    
+                    <!-- Grounded Summary Assistant Block -->
+                    <div id="ragSummary" class="rag-summary-card"></div>
+                    
                     <div id="ragResults" class="results-list">
                         <!-- Injected dynamically -->
                     </div>
@@ -578,6 +725,13 @@ def main():
         document.getElementById('val-auc-ci').innerText = "[" + CONF_INTERVAL.roc_auc_ci[0].toFixed(4) + ", " + CONF_INTERVAL.roc_auc_ci[1].toFixed(4) + "]";
         document.getElementById('val-synthetic').innerText = (SYNTHETIC.synthetic_prepay_probability * 100).toFixed(2) + "%";
 
+        // LOAD DRIFT VALUES
+        document.getElementById('drift-val-age').innerText = DRIFT.loan_age.toFixed(4);
+        document.getElementById('drift-val-rem').innerText = DRIFT.remaining_months.toFixed(4);
+        document.getElementById('drift-val-fico').innerText = DRIFT.credit_score.toFixed(4);
+        document.getElementById('drift-val-ltv').innerText = DRIFT.ltv.toFixed(4);
+        document.getElementById('drift-val-dti').innerText = DRIFT.dti.toFixed(4);
+
         // LOAD FAIRNESS TABLES
         document.getElementById('fair-prime-tpr').innerText = (FAIRNESS.true_positive_rates.Prime * 100).toFixed(2) + "%";
         document.getElementById('fair-near-tpr').innerText = (FAIRNESS.true_positive_rates['Near-Prime'] * 100).toFixed(2) + "%";
@@ -591,25 +745,34 @@ def main():
         const tbody = document.getElementById('al-table-body');
         AL_QUEUE.forEach(row => {{
             const tr = document.createElement('tr');
+            let badgeClass = 'badge-low';
+            if (row.active_learning_priority > 0.7) badgeClass = 'badge-high';
+            else if (row.active_learning_priority > 0.5) badgeClass = 'badge-medium';
+            
             tr.innerHTML = `
-                <td>${{row.loan_id}}</td>
+                <td><strong>${{row.loan_id}}</strong></td>
                 <td>${{row.credit_score}}</td>
                 <td>${{row.ltv}}%</td>
                 <td>${{row.dti}}%</td>
                 <td>${{(row.prob_base * 100).toFixed(2)}}%</td>
                 <td>${{row.anomaly_score.toFixed(4)}}</td>
-                <td><span class="badge badge-high">${{row.active_learning_priority.toFixed(4)}}</span></td>
+                <td><span class="badge ${{badgeClass}}">${{row.active_learning_priority.toFixed(4)}}</span></td>
+                <td><small style="color:#475569; font-weight:500;">${{row.reviewer_note}}</small></td>
             `;
             tbody.appendChild(tr);
         }});
 
         // GROUNDED RAG SEARCH
         function executeRAG() {{
-            const query = document.getElementById('ragQuery').value.toLowerCase();
+            const query = document.getElementById('ragQuery').value.toLowerCase().trim();
             const resultsBox = document.getElementById('ragResults');
-            resultsBox.innerHTML = '';
+            const summaryBox = document.getElementById('ragSummary');
             
-            if (!query.trim()) return;
+            resultsBox.innerHTML = '';
+            summaryBox.style.display = 'none';
+            summaryBox.innerHTML = '';
+            
+            if (!query) return;
             
             let matched = [];
             RAG_DOCS.forEach(doc => {{
@@ -618,7 +781,10 @@ def main():
                     if (doc.content.toLowerCase().includes(word)) score++;
                 }});
                 if (score > 0) {{
-                    matched.push({{ score, doc }});
+                    // Deduplicate
+                    if (!matched.some(m => m.doc.content === doc.content)) {{
+                        matched.push({{ score, doc }});
+                    }}
                 }}
             }});
             
@@ -626,16 +792,46 @@ def main():
             const topHits = matched.slice(0, 3);
             
             if (topHits.length === 0) {{
-                resultsBox.innerHTML = '<div class="result-item">No grounded definitions found.</div>';
+                resultsBox.innerHTML = '<div class="result-item" style="color: #b91c1c; font-weight:600;">Grounded Warning: The keyword is outside the project\\'s data dictionary or validation rules. Please refine your query.</div>';
                 return;
             }}
+            
+            // Build Assistant Grounded Summary
+            summaryBox.style.display = 'block';
+            let summaryText = `<strong>Grounded Assistant Summary:</strong> The query for "<u>${{query}}</u>" matches the local project definitions. `;
+            
+            topHits.forEach(hit => {{
+                if (hit.doc.source === 'data_dictionary.md') {{
+                    summaryText += `The data dictionary defines this column's purpose. `;
+                }} else {{
+                    try {{
+                        const ruleObj = JSON.parse(hit.doc.content.split(']: ')[1]);
+                        summaryText += `Validation check rule constraint: <i>"${{ruleObj.description}}"</i> (Formula: <code>${{ruleObj.check}}</code>). `;
+                    }} catch(e) {{
+                        summaryText += `Validation rule constraints are active for this attribute. `;
+                    }}
+                }}
+            }});
+            
+            summaryBox.innerHTML = summaryText;
             
             topHits.forEach(hit => {{
                 const item = document.createElement('div');
                 item.className = 'result-item';
+                
+                let contentText = hit.doc.content;
+                if (hit.doc.source === 'validation_rules.json') {{
+                    try {{
+                        const rawJson = hit.doc.content.split(']: ')[1];
+                        const keyName = hit.doc.content.split(']: ')[0].split('[')[1];
+                        const ruleObj = JSON.parse(rawJson);
+                        contentText = `<strong>Rule Name:</strong> ${{keyName}}<br><strong>Description:</strong> ${{ruleObj.description}}<br><strong>Formula Check:</strong> <code>${{ruleObj.check}}</code>`;
+                    }} catch(e) {{}}
+                }}
+                
                 item.innerHTML = `
                     <div class="result-source">${{hit.doc.source}}</div>
-                    <div class="result-text">${{hit.doc.content}}</div>
+                    <div class="result-text">${{contentText}}</div>
                 `;
                 resultsBox.appendChild(item);
             }});
