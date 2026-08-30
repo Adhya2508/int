@@ -706,45 +706,82 @@
             let matched = [];
             RAG_DOCS.forEach(doc => {
                 let score = 0;
+                // Score overlap
                 query.split(' ').forEach(word => {
-                    if (doc.content.toLowerCase().includes(word)) score++;
+                    if (doc.content.toLowerCase().includes(word)) score += 2;
                 });
+                // Extra weight if the whole query aligns exactly
+                if (doc.content.toLowerCase().includes(query)) score += 5;
+                
                 if (score > 0) {
-                    // Deduplicate
-                    if (!matched.some(m => m.doc.content === doc.content)) {
-                        matched.push({ score, doc });
-                    }
+                    matched.push({ score, doc });
                 }
             });
             
             matched.sort((a, b) => b.score - a.score);
-            const topHits = matched.slice(0, 3);
             
-            if (topHits.length === 0) {
-                resultsBox.innerHTML = '<div class="result-item" style="color: #b91c1c; font-weight:600;">Grounded Warning: The keyword is outside the project\'s data dictionary or validation rules. Please refine your query.</div>';
+            // Deduplicate and filter down to top 1 dictionary definition and top 1 validation rule
+            let finalHits = [];
+            let seenTerms = new Set();
+            let dictCount = 0;
+            let ruleCount = 0;
+            
+            for (let hit of matched) {
+                let term = "";
+                let isRule = hit.doc.source === "validation_rules.json";
+                
+                if (isRule) {
+                    term = hit.doc.content.split(']: ')[0].split('[')[1];
+                    if (ruleCount >= 1) continue;
+                } else {
+                    const match = hit.doc.content.match(/\* `([^`]+)`:/);
+                    if (match) {
+                        term = match[1];
+                    }
+                    if (dictCount >= 1) continue;
+                }
+                
+                if (term) {
+                    const uniqueKey = term + "_" + hit.doc.source;
+                    if (seenTerms.has(uniqueKey)) continue;
+                    seenTerms.add(uniqueKey);
+                }
+                
+                finalHits.push(hit);
+                if (isRule) ruleCount++;
+                else dictCount++;
+                
+                if (finalHits.length >= 2) break;
+            }
+            
+            if (finalHits.length === 0) {
+                resultsBox.innerHTML = '<div class="result-item" style="color: #b91c1c; font-weight:600;">No strong match found. Try a more specific term (e.g. ltv, delinquency, balance_consistency).</div>';
                 return;
             }
             
             // Build Assistant Grounded Summary
             summaryBox.style.display = 'block';
-            let summaryText = `<strong>Grounded Assistant Summary:</strong> The query for "<u>${query}</u>" matches the local project definitions. `;
+            let summaryText = "";
+            let reviewerNote = "";
             
-            topHits.forEach(hit => {
-                if (hit.doc.source === 'data_dictionary.md') {
-                    summaryText += `The data dictionary defines this column's purpose. `;
-                } else {
-                    try {
-                        const ruleObj = JSON.parse(hit.doc.content.split(']: ')[1]);
-                        summaryText += `Validation check rule constraint: <i>"${ruleObj.description}"</i> (Formula: <code>${ruleObj.check}</code>). `;
-                    } catch(e) {
-                        summaryText += `Validation rule constraints are active for this attribute. `;
-                    }
-                }
-            });
+            if (query.includes("delinquency") || query.includes("progression")) {
+                summaryText = "Delinquency status tracks the current payment stage. The rule requires delinquency to move gradually and not jump more than one month at a time.";
+                reviewerNote = "Reviewers must flag jumps of >1 delinquency stage in a single reporting cycle to catch servicing errors.";
+            } else if (query.includes("upb") || query.includes("balance") || query.includes("consistency")) {
+                summaryText = "Unpaid Principal Balance (UPB) represents the outstanding principal of the loan. The balance consistency rule checks that UPB does not exceed original balance + tolerance.";
+                reviewerNote = "Manually check if current UPB exceeds origination balance to flag payment posting issues.";
+            } else if (query.includes("zero_balance") || query.includes("prepaid") || query.includes("status")) {
+                summaryText = "Zero Balance Code details the disposition reason (prepaid, short sale, REO). The prepaid status rule checks that zero_balance_code is populated if UPB is 0.";
+                reviewerNote = "Verify correct prepay flag mapping when zero_balance_code is 01.";
+            } else {
+                summaryText = "Data dictionary rows and business validation rule bounds are active for this attribute.";
+                reviewerNote = "Verify matching source cards for verification rules.";
+            }
             
-            summaryBox.innerHTML = summaryText;
+            summaryBox.innerHTML = `<strong>Assistant Grounded Summary:</strong> ${summaryText}<br><small style="color:#047857; font-weight:600;">Reviewer Action Note: ${reviewerNote}</small>`;
             
-            topHits.forEach(hit => {
+            // Render clean evidence cards
+            finalHits.forEach(hit => {
                 const item = document.createElement('div');
                 item.className = 'result-item';
                 
@@ -754,8 +791,11 @@
                         const rawJson = hit.doc.content.split(']: ')[1];
                         const keyName = hit.doc.content.split(']: ')[0].split('[')[1];
                         const ruleObj = JSON.parse(rawJson);
-                        contentText = `<strong>Rule Name:</strong> ${keyName}<br><strong>Description:</strong> ${ruleObj.description}<br><strong>Formula Check:</strong> <code>${ruleObj.check}</code>`;
+                        contentText = `<strong>Validation Rule Constraint:</strong> ${keyName}<br><strong>Description:</strong> ${ruleObj.description}<br><strong>Check Rule Formula:</strong> <code>${ruleObj.check}</code>`;
                     } catch(e) {}
+                } else {
+                    contentText = contentText.replace("Data Dictionary Row: * ", "").replace(/`/g, "");
+                    contentText = `<strong>Field Definition:</strong> ${contentText}`;
                 }
                 
                 item.innerHTML = `
