@@ -1262,8 +1262,13 @@ def main():
     output_html = os.path.join(OUT_DIR, "dashboard.html")
     with open(output_html, "w", encoding="utf-8") as f:
         f.write(html_content)
+
+    # Write root index.html for instant deployment (GitHub Pages, Vercel, Netlify)
+    root_index = os.path.join(BASE_DIR, "index.html")
+    with open(root_index, "w", encoding="utf-8") as f:
+        f.write(html_content)
         
-    print(f"Dashboard with Loan Test Bench generated successfully at {output_html}!")
+    print(f"Dashboard generated successfully at {output_html} and root {root_index}!")
 
 if __name__ == "__main__":
     main()
