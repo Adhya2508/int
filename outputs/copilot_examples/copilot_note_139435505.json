@@ -1,10 +1,10 @@
 {
   "reviewer_summary": "Loan ID 139435505 has a prepayment probability of 22.88%, which exceeds the prepayment risk threshold of 14.86%. The borrower has a strong credit score of 764 and a DTI of 35%.",
-  "why_flagged": "This loan is flagged due to a prepayment risk status (Flag_Prepay_Risk) as the calibrated prepayment probability of 22.88% is significantly above the threshold of 14.86%. The anomaly score of 0.6056 indicates some level of concern.",
+  "why_flagged": "This loan is flagged due to the prepayment risk status, as the calibrated prepayment probability of 22.88% is significantly above the threshold of 14.86%. Additionally, the anomaly score of 0.6056 indicates some level of concern.",
   "manual_checklists": [
-    "Review the borrower's loan purpose and current interest rate.",
-    "Assess the implications of the high prepayment probability on loan performance.",
-    "Verify the borrower's financial stability given the LTV of 89%."
+    "Verify the borrower's credit history and payment behavior.",
+    "Assess the loan purpose and current interest rate in relation to market conditions.",
+    "Review any potential changes in the borrower's financial situation since origination."
   ],
   "confidence_level": "Medium",
   "recommendation_label": "review",

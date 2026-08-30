@@ -1,10 +1,10 @@
 {
   "reviewer_summary": "Loan ID 139435503 has a credit score of 764, a loan-to-value ratio of 89%, and a debt-to-income ratio of 35%. The prepayment probability is low at 0.95%, and the decision band status is 'Accept'.",
-  "why_flagged": "The loan is considered normal as it does not have any business rule violations or exception flags. The anomaly score of 0.1618 is low, indicating no significant concerns.",
+  "why_flagged": "The loan is considered normal as it falls well below the prepayment risk threshold of 14.86%. The anomaly score of 0.1618 indicates no significant concerns, and there are no business rule violations or exception flags.",
   "manual_checklists": [
-    "Verify the accuracy of the credit score and DTI ratio.",
-    "Confirm the loan's origination balance and LTV ratio.",
-    "Review lagged performance features for any potential issues."
+    "Verify the accuracy of the credit score, LTV, and DTI ratios.",
+    "Confirm the absence of any business rule violations or exception flags.",
+    "Review the lagged performance features for any potential trends."
   ],
   "confidence_level": "High",
   "recommendation_label": "likely normal",

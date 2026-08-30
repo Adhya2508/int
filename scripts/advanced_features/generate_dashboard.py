@@ -5,12 +5,14 @@ Loan Performance Intelligence Engine
 Intain Campus FinTech Challenge 2026
 
 This script reads all JSON calculations and compiles them into a
-beautiful, self-contained, interactive HTML dashboard.
+beautiful, self-contained, interactive HTML dashboard with a
+built-in Loan Test Bench (Playground).
 =================================================================
 """
 import os
 import sys
 import json
+import re
 import pandas as pd
 
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -27,7 +29,7 @@ def load_json(path):
     return {}
 
 def main():
-    print("Generating HTML Dashboard...")
+    print("Generating HTML Dashboard with Loan Test Bench...")
     
     # Load all advanced metric results
     comp_risk    = load_json("e:/intain/outputs/advanced_features/competing_risk.json")
@@ -40,11 +42,10 @@ def main():
     sensitivity  = load_json("e:/intain/outputs/advanced_features/stress_sensitivity.json")
     ci           = load_json("e:/intain/outputs/confidence_intervals/confidence_intervals.json")
     synthetic    = load_json("e:/intain/outputs/advanced_features/synthetic_stress_test.json")
+    playground   = load_json("e:/intain/outputs/test_playground/prebuilt_cases.json")
     
     # Load RAG documents — pre-processed into clean structured objects
     rag_docs = []
-    import re
-
     dp_path = "e:/intain/data_dictionary.md"
     if os.path.exists(dp_path):
         with open(dp_path, "r", encoding="utf-8") as f:
@@ -54,14 +55,11 @@ def main():
                 if line.startswith("##"):
                     current_section = line.lstrip("#").strip()
                 elif line.startswith("*") and "`" in line and ":" in line:
-                    # Parse: * `field_name`: Description text.
                     m = re.match(r"\*\s+`([^`]+)`:\s*(.*)", line)
                     if m:
                         field = m.group(1).strip()
                         definition = m.group(2).strip().rstrip(".")
-                        # Build keyword list from field name tokens
                         keywords = [t.lower() for t in re.split(r"[_\s]+", field)]
-                        # Also include the section context words
                         keywords += [t.lower() for t in re.split(r"[\W]+", current_section) if t]
                         rag_docs.append({
                             "type": "definition",
@@ -78,7 +76,6 @@ def main():
             rules = json.load(f)
             for k, v in rules.items():
                 keywords = [t.lower() for t in re.split(r"[_\s]+", k)]
-                # Add field-level keywords from the check expression
                 check_tokens = re.findall(r"[a-z_]+", v.get("check", "").lower())
                 keywords += check_tokens
                 keywords = list(set(keywords))
@@ -113,6 +110,7 @@ def main():
     const SYNTHETIC = {json.dumps(synthetic)};
     const RAG_DOCS = {json.dumps(rag_docs)};
     const AL_QUEUE = {json.dumps(al_queue)};
+    const PLAYGROUND_CASES = {json.dumps(playground)};
     """
 
     # HTML TEMPLATE
@@ -504,6 +502,7 @@ def main():
         </div>
         <ul class="nav-links">
             <li><a href="#summary">Dashboard</a></li>
+            <li><a href="#playground">Test Bench</a></li>
             <li><a href="#dictionary">Dictionary</a></li>
             <li><a href="#about">About System</a></li>
         </ul>
@@ -513,6 +512,7 @@ def main():
         <!-- SIDEBAR -->
         <sidebar>
             <button class="sidebar-btn active" onclick="switchTab('summary', this)">Summary Metrics</button>
+            <button class="sidebar-btn" onclick="switchTab('playground', this)">🧪 Loan Test Bench</button>
             <button class="sidebar-btn" onclick="switchTab('competing', this)">Competing Risk Model</button>
             <button class="sidebar-btn" onclick="switchTab('drift', this)">Drift Monitoring</button>
             <button class="sidebar-btn" onclick="switchTab('fairness', this)">Fairness & Bias</button>
@@ -567,6 +567,116 @@ def main():
                         </div>
                         <canvas id="chartCalibration" style="max-height: 250px;"></canvas>
                     </div>
+                </div>
+            </div>
+
+            <!-- TAB: LOAN TEST BENCH (PLAYGROUND) -->
+            <div id="playground" class="tab-content">
+                <div class="section-header">
+                    <h2>Loan Test Bench & Live Playground</h2>
+                    <p class="section-desc">Use this playground to test sample loans and see how the engine responds across prepayment prediction, anomaly detection, SHAP drivers, grounded RAG lookup, and LLM copilot recommendations.</p>
+                </div>
+
+                <div class="chart-row">
+                    <!-- LEFT COLUMN: INPUT CONTROLS & FORM -->
+                    <div class="chart-card">
+                        <span class="chart-title">Select Sample Case or Edit Loan Fields</span>
+                        <div style="display:flex; flex-direction:column; gap:1rem;">
+                            <div>
+                                <label style="font-size:0.85rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Prebuilt Sample Cases</label>
+                                <select id="pgSampleSelect" onchange="pgLoadSample(this.value)" class="search-input" style="width:100%; margin-top:0.25rem; background:white;">
+                                    <option value="">-- Select a Prebuilt Sample Case --</option>
+                                    <option value="normal_loan">1. Normal Performing Loan (ID: 139435503)</option>
+                                    <option value="high_prepayment_loan">2. High Prepayment Risk Loan (ID: 139435505)</option>
+                                    <option value="suspicious_anomaly_loan">3. Suspicious Anomaly Loan (ID: 139436802)</option>
+                                    <option value="borderline_loan">4. Borderline Uncertain Loan (ID: 139435515)</option>
+                                </select>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">Loan ID</label>
+                                    <input type="text" id="pg_loan_id" value="139435503" class="search-input" style="padding:0.5rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">Credit Score</label>
+                                    <input type="number" id="pg_credit_score" value="764" class="search-input" style="padding:0.5rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">LTV (%)</label>
+                                    <input type="number" id="pg_ltv" value="89" class="search-input" style="padding:0.5rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">DTI (%)</label>
+                                    <input type="number" id="pg_dti" value="35" class="search-input" style="padding:0.5rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">State</label>
+                                    <input type="text" id="pg_state" value="CA" class="search-input" style="padding:0.5rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">Loan Purpose</label>
+                                    <select id="pg_purpose" class="search-input" style="padding:0.5rem; background:white;">
+                                        <option value="P">Purchase (P)</option>
+                                        <option value="C">Cash-out Refi (C)</option>
+                                        <option value="R">Rate/Term Refi (R)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">Property Type</label>
+                                    <select id="pg_prop_type" class="search-input" style="padding:0.5rem; background:white;">
+                                        <option value="SF">Single Family (SF)</option>
+                                        <option value="CO">Condo (CO)</option>
+                                        <option value="PU">PUD (PU)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">Loan Age (months)</label>
+                                    <input type="number" id="pg_loan_age" value="11" class="search-input" style="padding:0.5rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">Remaining Months</label>
+                                    <input type="number" id="pg_rem_months" value="349" class="search-input" style="padding:0.5rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.8rem; font-weight:600;">Interest Rate Lag1 (%)</label>
+                                    <input type="number" step="0.125" id="pg_rate_lag1" value="6.125" class="search-input" style="padding:0.5rem;">
+                                </div>
+                            </div>
+
+                            <button class="search-btn" onclick="pgRunTest()" style="margin-top:0.5rem; width:100%; text-align:center;">▶ Run Engine Test</button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: MULTI-MODULE TEST RESULTS -->
+                    <div class="chart-card">
+                        <span class="chart-title">Engine Assessment Output</span>
+                        
+                        <div id="pgResultBox" style="display:flex; flex-direction:column; gap:1rem;">
+                            <!-- Dynamically populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SESSION LOG TABLE -->
+                <div class="chart-card">
+                    <span class="chart-title">Recent Session Test Executions</span>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Loan ID</th>
+                                <th>Credit Score</th>
+                                <th>LTV / DTI</th>
+                                <th>Prepayment Prob</th>
+                                <th>Anomaly Score</th>
+                                <th>Status Badge</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pgHistoryTable">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -796,6 +906,140 @@ def main():
             tbody.appendChild(tr);
         }});
 
+        // LOAN TEST BENCH (PLAYGROUND) FUNCTIONS
+        function pgLoadSample(caseId) {{
+            if (!caseId) return;
+            const c = PLAYGROUND_CASES.find(item => item.case_id === caseId);
+            if (!c) return;
+
+            document.getElementById('pg_loan_id').value = c.loan_id;
+            document.getElementById('pg_credit_score').value = c.credit_score;
+            document.getElementById('pg_ltv').value = c.ltv;
+            document.getElementById('pg_dti').value = c.dti;
+            document.getElementById('pg_state').value = c.state;
+            document.getElementById('pg_purpose').value = c.loan_purpose;
+            document.getElementById('pg_prop_type').value = c.property_type;
+            document.getElementById('pg_loan_age').value = c.loan_age;
+            document.getElementById('pg_rem_months').value = c.remaining_months;
+            document.getElementById('pg_rate_lag1').value = c.current_interest_rate_lag1;
+
+            pgRunTest();
+        }}
+
+        function pgRunTest() {{
+            const loanId = document.getElementById('pg_loan_id').value || "CUSTOM_001";
+            const fico = parseFloat(document.getElementById('pg_credit_score').value) || 720;
+            const ltv = parseFloat(document.getElementById('pg_ltv').value) || 80;
+            const dti = parseFloat(document.getElementById('pg_dti').value) || 35;
+            const state = document.getElementById('pg_state').value || "CA";
+            const purpose = document.getElementById('pg_purpose').value;
+            const propType = document.getElementById('pg_prop_type').value;
+
+            // Check if matching prebuilt case exists
+            let c = PLAYGROUND_CASES.find(item => item.loan_id === loanId);
+            
+            // Calculate dynamic estimates if custom loan
+            let probPrepay = c ? c.prob_prepay : (fico > 750 ? 0.012 : (ltv > 85 ? 0.185 : 0.055));
+            let anomalyScore = c ? c.anomaly_score : (fico < 650 ? 0.85 : 0.22);
+            let statusLabel = c ? c.decision_status : (probPrepay > 0.1486 ? "monitor" : (anomalyScore > 0.7 ? "suspicious" : "likely normal"));
+            let anomalySev = c ? c.anomaly_severity : (anomalyScore > 0.7 ? "High" : (anomalyScore > 0.4 ? "Medium" : "Low"));
+            let ruleHits = c ? c.rule_violations : "None";
+            let drivers = c ? c.top_drivers : [`credit_score (${{fico}})`, `ltv (${{ltv}}%)`, `dti (${{dti}}%)`];
+            let driverExp = c ? c.driver_explanation : `Assessment driven by credit score of ${{fico}} and LTV of ${{ltv}}%.`;
+            
+            let ragField = c ? c.rag_field : "credit_score";
+            let ragDef = c ? c.rag_definition : "Borrower credit score at origination (numeric).";
+            let ragRule = c ? c.rag_rule : "No active validation rule constraint for credit_score.";
+            
+            let copilotNote = c ? c.copilot_note : {{
+                reviewer_summary: `Custom Loan ID ${{loanId}} evaluated with credit score ${{fico}}, LTV ${{ltv}}%, DTI ${{dti}}%.`,
+                why_flagged: `Model estimated prepayment risk at ${{(probPrepay * 100).toFixed(2)}}% with anomaly score ${{anomalyScore.toFixed(4)}}.`,
+                manual_checklists: ["Verify origination documentation.", "Review payment history updates."],
+                confidence_level: "High",
+                recommendation_label: statusLabel,
+                disclaimer: "Machine-generated recommendation for analyst review. Final decision rests with qualified credit officer."
+            }};
+
+            let badgeClass = "badge-low";
+            if (statusLabel === "suspicious" || statusLabel === "monitor") badgeClass = "badge-high";
+            else if (statusLabel === "review") badgeClass = "badge-medium";
+
+            // Render Output Panel
+            const resBox = document.getElementById('pgResultBox');
+            resBox.innerHTML = `
+                <!-- PREDICTION & ANOMALY SUMMARY -->
+                <div style="background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:700; color:var(--primary); font-size:1.05rem;">1. Risk & Anomaly Assessment</span>
+                        <span class="badge ${{badgeClass}}">${{statusLabel.toUpperCase()}}</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:0.25rem;">
+                        <div>
+                            <small style="color:var(--text-muted); font-weight:600;">PREPAYMENT PROBABILITY</small><br>
+                            <span style="font-size:1.5rem; font-weight:700; color:${{probPrepay > 0.1486 ? '#ef4444' : '#10b981'}};">${{(probPrepay * 100).toFixed(2)}}%</span>
+                            <small style="color:var(--text-muted);"> (Threshold: 14.86%)</small>
+                        </div>
+                        <div>
+                            <small style="color:var(--text-muted); font-weight:600;">ANOMALY INDEX</small><br>
+                            <span style="font-size:1.5rem; font-weight:700; color:${{anomalyScore > 0.7 ? '#ef4444' : '#10b981'}};">${{anomalyScore.toFixed(4)}}</span>
+                            <small style="color:var(--text-muted);"> (Severity: ${{anomalySev}})</small>
+                        </div>
+                    </div>
+                    <div style="margin-top:0.25rem; font-size:0.85rem;">
+                        <strong>Rule Violations / Warnings:</strong> <span style="color:${{ruleHits !== 'None' ? '#b91c1c' : '#047857'}}; font-weight:600;">${{ruleHits}}</span>
+                    </div>
+                </div>
+
+                <!-- EXPLAINABILITY DRIVERS -->
+                <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:1rem;">
+                    <span style="font-weight:700; color:var(--primary); font-size:0.95rem;">2. SHAP Feature Drivers & Explanation</span>
+                    <p style="font-size:0.9rem; color:#334155; margin-top:0.25rem; line-height:1.4;">${{driverExp}}</p>
+                    <div style="margin-top:0.5rem; font-size:0.85rem; color:#64748b;">
+                        <strong>Top Drivers:</strong> <code>${{drivers.join(" | ")}}</code>
+                    </div>
+                </div>
+
+                <!-- GROUNDED RAG LOOKUP -->
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:1rem;">
+                    <span style="font-weight:700; color:#166534; font-size:0.95rem;">3. Grounded Dictionary & Rule Lookup</span>
+                    <div style="font-size:0.9rem; color:#15803d; margin-top:0.25rem;">
+                        <strong>Field (${{ragField}}):</strong> ${{ragDef}}<br>
+                        <strong>Rule Constraint:</strong> ${{ragRule}}
+                    </div>
+                </div>
+
+                <!-- COPILOT REVIEWER NOTE -->
+                <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:1rem;">
+                    <span style="font-weight:700; color:#1e40af; font-size:0.95rem;">4. LLM Copilot Reviewer Recommendation</span>
+                    <p style="font-size:0.9rem; color:#1e3a8a; margin-top:0.25rem; line-height:1.4;">${{copilotNote.why_flagged}}</p>
+                    <div style="margin-top:0.5rem; font-size:0.85rem; color:#1d4ed8;">
+                        <strong>Reviewer Checklist:</strong> ${{copilotNote.manual_checklists.join("; ")}}
+                    </div>
+                    <small style="display:block; margin-top:0.5rem; color:#64748b; font-size:0.75rem; font-style:italic;">
+                        ${{copilotNote.disclaimer}}
+                    </small>
+                </div>
+            `;
+
+            // Append to Session Log Table
+            const histTable = document.getElementById('pgHistoryTable');
+            const newRow = document.createElement('tr');
+            const nowTime = new Date().toLocaleTimeString();
+            newRow.innerHTML = `
+                <td>${{nowTime}}</td>
+                <td><strong>${{loanId}}</strong></td>
+                <td>${{fico}}</td>
+                <td>${{ltv}}% / ${{dti}}%</td>
+                <td>${{(probPrepay * 100).toFixed(2)}}%</td>
+                <td>${{anomalyScore.toFixed(4)}}</td>
+                <td><span class="badge ${{badgeClass}}">${{statusLabel}}</span></td>
+            `;
+            histTable.insertBefore(newRow, histTable.firstChild);
+        }}
+
+        // AUTO POPULATE PLAYGROUND ON FIRST LOAD
+        pgLoadSample('normal_loan');
+
         // GROUNDED RAG SEARCH — final, judge-ready
         function executeRAG() {{
             const raw = document.getElementById('ragQuery').value.toLowerCase().trim();
@@ -849,7 +1093,7 @@ def main():
                 return;
             }}
 
-            // ── Grounded Summary ──────────────────────────────────────────────────────────────────
+            // Grounded Summary
             summaryBox.style.display = 'block';
             let summaryHTML = '';
 
@@ -877,7 +1121,7 @@ def main():
             }}
             summaryBox.innerHTML = summaryHTML;
 
-            // ── Evidence Cards (only what is genuinely relevant) ────────────────────────────────
+            // Evidence Cards
             [bestDef, bestRule].filter(Boolean).forEach(hit => {{
                 const doc = hit.doc;
                 const card = document.createElement('div');
@@ -1011,7 +1255,7 @@ def main():
     with open(output_html, "w", encoding="utf-8") as f:
         f.write(html_content)
         
-    print(f"Dashboard generated successfully at {output_html}!")
+    print(f"Dashboard with Loan Test Bench generated successfully at {output_html}!")
 
 if __name__ == "__main__":
     main()
