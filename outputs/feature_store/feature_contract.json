@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-08-30",
+  "features": {
+    "numeric": [
+      "delinquency_status_lag1",
+      "current_upb_lag1",
+      "current_interest_rate_lag1",
+      "loan_age",
+      "remaining_months",
+      "orig_upb",
+      "credit_score",
+      "ltv",
+      "dti",
+      "upb_pct_of_orig",
+      "term_pct_elapsed"
+    ],
+    "categorical": [
+      "state",
+      "loan_purpose",
+      "property_type",
+      "vintage"
+    ]
+  },
+  "remediation_applied": [
+    "First-row lag imputation using origination UPB/current credit",
+    "Clip negative ages to 0",
+    "Target leakage exclusion of same-period performance attributes"
+  ]
+}

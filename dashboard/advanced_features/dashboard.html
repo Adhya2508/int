@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Quality & Advanced Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --primary-light: #334155;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* HEADER (Speridian & Pragma style integration) */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--accent);
+            box-shadow: var(--shadow);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 6px;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: white;
+        }
+        
+        /* MAIN BODY LAYOUT */
+        .dashboard-container {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* SIDEBAR */
+        sidebar {
+            background-color: white;
+            width: 260px;
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .sidebar-btn {
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-btn:hover {
+            background-color: var(--bg-light);
+            color: var(--accent);
+        }
+        
+        .sidebar-btn.active {
+            background-color: #eff6ff;
+            color: var(--accent);
+        }
+        
+        /* CONTENT SECTION */
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            max-width: 1400px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        /* CARDS & GRID */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .metric-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: transform 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .metric-trend {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
+        
+        /* ANALYTICS SECTION GRID */
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 900px) {
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        
+        /* RAG STYLING */
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+        
+        .search-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .search-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .result-item {
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .result-source {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .result-text {
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* ACTIVE LEARNING TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background-color: var(--bg-light);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        td {
+            font-size: 0.9rem;
+        }
+        
+        tr:hover {
+            background-color: var(--bg-light);
+        }
+        
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .badge-high { background-color: #fee2e2; color: #ef4444; }
+        .badge-medium { background-color: #fef3c7; color: #d97706; }
+        .badge-low { background-color: #d1fae5; color: #10b981; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon"></div>
+            <span class="logo-text">pragma loan analytics</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#summary">Dashboard</a></li>
+            <li><a href="#dictionary">Dictionary</a></li>
+            <li><a href="#about">About System</a></li>
+        </ul>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- SIDEBAR -->
+        <sidebar>
+            <button class="sidebar-btn active" onclick="switchTab('summary', this)">Summary Metrics</button>
+            <button class="sidebar-btn" onclick="switchTab('competing', this)">Competing Risk Model</button>
+            <button class="sidebar-btn" onclick="switchTab('drift', this)">Drift Monitoring</button>
+            <button class="sidebar-btn" onclick="switchTab('fairness', this)">Fairness & Bias</button>
+            <button class="sidebar-btn" onclick="switchTab('active-learning', this)">Active Learning Queue</button>
+            <button class="sidebar-btn" onclick="switchTab('rag-search', this)">Grounded RAG Search</button>
+        </sidebar>
+
+        <!-- MAIN CONTENT PANEL -->
+        <main>
+            <!-- TAB: SUMMARY METRICS -->
+            <div id="summary" class="tab-content active">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Monte Carlo Median Prepayment</span>
+                        <span class="metric-value" id="val-mc-median">--</span>
+                        <span class="metric-trend trend-up">Calibrated</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Validation ROC-AUC</span>
+                        <span class="metric-value">0.8116</span>
+                        <span class="metric-trend trend-up">High Accuracy</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">95% Confidence Interval (AUC)</span>
+                        <span class="metric-value" id="val-auc-ci">--</span>
+                        <span class="metric-trend trend-up">Bootstrapped</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Synthetic Stress Prepay</span>
+                        <span class="metric-value" id="val-synthetic">--</span>
+                        <span class="metric-trend trend-down">Extreme Stress</span>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-card">
+                        <span class="chart-title">Stress Sensitivity by Feature Cluster</span>
+                        <canvas id="chartSensitivity" style="max-height: 250px;"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <span class="chart-title">Calibration Error (Brier Score) per Credit Band</span>
+                        <canvas id="chartCalibration" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: COMPETING RISK -->
+            <div id="competing" class="tab-content">
+                <div class="chart-card" style="width: 100%;">
+                    <span class="chart-title">Competing Risk Cumulative Incidence Functions (CIF)</span>
+                    <canvas id="chartCompeting" style="max-height: 400px;"></canvas>
+                </div>
+            </div>
+
+            <!-- TAB: DRIFT MONITORING -->
+            <div id="drift" class="tab-content">
+                <div class="chart-card" style="width: 100%;">
+                    <span class="chart-title">Population Stability Index (PSI) -- Train vs Test Drift</span>
+                    <canvas id="chartDrift" style="max-height: 400px;"></canvas>
+                </div>
+            </div>
+
+            <!-- TAB: FAIRNESS -->
+            <div id="fairness" class="tab-content">
+                <div class="chart-card">
+                    <span class="chart-title">Fairness Metrics (True Positive Rate by Credit Band)</span>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Segment (Credit Band)</th>
+                                <th>True Positive Rate (Equal Opportunity)</th>
+                                <th>Brier Score Calibration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Prime (Credit Score > 720)</td>
+                                <td id="fair-prime-tpr">--</td>
+                                <td id="fair-prime-brier">--</td>
+                            </tr>
+                            <tr>
+                                <td>Near-Prime (Credit Score 660-720)</td>
+                                <td id="fair-near-tpr">--</td>
+                                <td id="fair-near-brier">--</td>
+                            </tr>
+                            <tr>
+                                <td>Subprime (Credit Score < 660)</td>
+                                <td id="fair-subprime-tpr">--</td>
+                                <td id="fair-subprime-brier">--</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: ACTIVE LEARNING -->
+            <div id="active-learning" class="tab-content">
+                <div class="chart-card">
+                    <span class="chart-title">Active Learning Priority Review Queue (Top 10 High-Priority Loans)</span>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Credit Score</th>
+                                <th>LTV</th>
+                                <th>DTI</th>
+                                <th>Base Probability</th>
+                                <th>Anomaly Score</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody id="al-table-body">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: RAG SEARCH -->
+            <div id="rag-search" class="tab-content">
+                <div class="chart-card">
+                    <span class="chart-title">Grounded RAG Assistant (Search Dictionary & Validation Rules)</span>
+                    <div class="search-container">
+                        <input type="text" id="ragQuery" class="search-input" placeholder="Type a keyword (e.g. ltv, delinquency, balance_consistency)...">
+                        <button class="search-btn" onclick="executeRAG()">Search</button>
+                    </div>
+                    <div id="ragResults" class="results-list">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- EMBEDDED DATA -->
+    <script>
+        
+    const COMP_RISK = {"months": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "CIF_prepayment": [0.0, 0.013519419357180595, 0.02685604616999626, 0.04001235216856003, 0.05299077928066254, 0.0657937303185463, 0.07842357456684113, 0.09088265895843506, 0.10317328572273254, 0.11529773473739624, 0.12725825607776642, 0.13905705511569977, 0.15069633722305298], "CIF_maturity": [0.0, 1.2419142194630695e-06, 2.4670368929946562e-06, 3.6755950532096904e-06, 4.867813004238997e-06, 6.0439110711740796e-06, 7.2041075327433646e-06, 8.348617484443821e-06, 9.477653293288313e-06, 1.0591423233563546e-05, 1.1690134670061525e-05, 1.2773990420100745e-05, 1.3843191482010297e-05], "survival_prob": [1.0, 0.9864793419837952, 0.9731414914131165, 0.9599840044975281, 0.9470043778419495, 0.9342002272605896, 0.9215692281723022, 0.9091089963912964, 0.8968172669410706, 0.8846917152404785, 0.8727300763130188, 0.8609302043914795, 0.8492898344993591]};
+    const MONTE_CARLO = {"mean_prepayment_rate": 0.06121456986573845, "median_prepayment_rate": 0.0611325211337643, "percentile_5": 0.05913724515166584, "percentile_95": 0.06345412729985082, "simulated_paths": [0.06051093983092989, 0.06119467926404774, 0.06085280954748881, 0.060573097961213324, 0.06473769269020388, 0.05985827946295375, 0.0612879164594729, 0.06271755345599205, 0.06141223272003978, 0.06107036300348086, 0.06110144206862258, 0.060324465440079564, 0.06225136747886623, 0.05954748881153655, 0.06150546991546494, 0.06197165589259075, 0.06302834410740925, 0.06166086524117355, 0.060448781700646444, 0.06368100447538538, 0.05951640974639483, 0.061163600198906015, 0.05898806563898558, 0.061163600198906015, 0.06107036300348086, 0.06184733963202387, 0.06364992541024365, 0.0631215813028344, 0.06110144206862258, 0.05960964694181999, 0.061443311785181504, 0.06063525609149677, 0.06190949776230731, 0.060386623570363, 0.060573097961213324, 0.06184733963202387, 0.06259323719542516, 0.0600758329189458, 0.06321481849825958, 0.06187841869716559, 0.059205619094977624, 0.06051093983092989, 0.060573097961213324, 0.059081302834410744, 0.06013799104922924, 0.06082173048234709, 0.06153654898060666, 0.06256215813028344, 0.058925907508702136, 0.06184733963202387]};
+    const DRIFT = {"credit_score": 0.00010129922852137974, "ltv": 0.0002265991761707979, "dti": 1.1704971420977158e-05, "loan_age": 18.01296348966264, "remaining_months": 0.0009897213548598857};
+    const SEGMENT = {"credit_band": {"Subprime": 0.06998293551576364, "Near-Prime": 0.05178749353900594, "Prime": 0.06267328225735723}, "vintage": {"12024": 0.06537449733064202, "12025": 0.06866683053314357, "22024": 0.09990564877884082, "32024": 0.1307071450659203, "42024": 0.12427470820417123, "52024": 0.11754280433801001, "62023": 0.06933096416219527, "62024": 0.08535430028581502, "72023": 0.19322196392713253, "72024": 0.06391239927887538, "82023": 0.10749937407107919, "82024": 0.043563864657619404, "92023": 0.11963219136269401, "92024": 0.037964160079873036, "102023": 0.037086602136134385, "102024": 0.03879768444666394, "112023": 0.11468645789858647, "112024": 0.049953101943811126, "122023": 0.14090588606595827, "122024": 0.06451663101616023}, "state": {"AK": 0.0627610353943711, "AL": 0.04099613644701261, "AR": 0.048937288408219516, "AZ": 0.0693292672575835, "CA": 0.09370480125218561, "CO": 0.08192390353580088, "CT": 0.053218058832706125, "DC": 0.06548103733881212, "DE": 0.07055857820691154, "FL": 0.04153213444320761, "GA": 0.05138526589155043, "GU": 0.011708857408868255, "HI": 0.07046622658659384, "IA": 0.03666761058886504, "ID": 0.07269998276150466, "IL": 0.06252047379189418, "IN": 0.044391591498503365, "KS": 0.05202246532795434, "KY": 0.05332466199074766, "LA": 0.04131612614023221, "MA": 0.08748647584588676, "MD": 0.06930873576661391, "ME": 0.0818889721748841, "MI": 0.048701650023012986, "MN": 0.042456771207106114, "MO": 0.061009452474295546, "MS": 0.05937520363959738, "MT": 0.0837048715029375, "NC": 0.07326296369569835, "ND": 0.06072385437752467, "NE": 0.04807440366311594, "NH": 0.07783792389642175, "NJ": 0.08128039992299935, "NM": 0.05671488651017096, "NV": 0.0648072582043191, "NY": 0.021827714836066343, "OH": 0.04521881115750252, "OK": 0.045008978322968976, "OR": 0.07394076178567012, "PA": 0.05517861455186856, "PR": 0.017463961249654922, "RI": 0.09995145761427718, "SC": 0.06443682668033399, "SD": 0.04475093792728709, "TN": 0.06413286727201514, "TX": 0.05868230922852978, "UT": 0.07477923036341594, "VA": 0.06320437984002451, "VT": 0.03191671433644453, "WA": 0.08661194396308838, "WI": 0.06752167448753911, "WV": 0.03647750057868263, "WY": 0.0692862193716162}};
+    const CALIBRATION = {"Subprime": {"brier_score": 0.055919528372078864, "roc_auc": 0.8127988127988128}, "Near-Prime": {"brier_score": 0.04553383982311581, "roc_auc": 0.8087602925422686}, "Prime": {"brier_score": 0.04876026789442019, "roc_auc": 0.8127391972843594}};
+    const FAIRNESS = {"true_positive_rates": {"Subprime": 0.5034965034965035, "Near-Prime": 0.2815884476534296, "Prime": 0.446773120425815}, "equal_opportunity_difference": -0.05672338307068853};
+    const COUNTERFACT = [{"loan_id": "139435505", "original_pred": "Flag for Refinance Risk", "original_prob": 0.2288, "counterfactual_scenario": "Decrease interest rate spread by 1.5%", "target_pred": "Accept", "target_prob": 0.0845}];
+    const SENSITIVITY = {"credit_stress_probability": 0.05197371766911569, "rate_stress_probability": 0.16308608900588464, "base_probability": 0.061164898660107804};
+    const CONF_INTERVAL = {"roc_auc_ci": [0.8053899951485773, 0.8159121519876568], "brier_score_ci": [0.047176823829107845, 0.04930069632676853]};
+    const SYNTHETIC = {"synthetic_prepay_probability": 0.023731725930093768, "description": "Stress testing of extreme cohort: credit=500, LTV=98%, DTI=62%."};
+    const RAG_DOCS = [{"source": "data_dictionary.md", "content": "* `loan_id`: Unique loan identifier (string)."}, {"source": "data_dictionary.md", "content": "* `orig_balance`: Original loan balance at origination (numeric)."}, {"source": "data_dictionary.md", "content": "* `credit_score`: Borrower credit score at origination (numeric)."}, {"source": "data_dictionary.md", "content": "* `ltv`: Loan-to-Value ratio at origination (numeric)."}, {"source": "data_dictionary.md", "content": "* `dti`: Debt-to-Income ratio at origination (numeric)."}, {"source": "data_dictionary.md", "content": "* `state`: US State code (string)."}, {"source": "data_dictionary.md", "content": "* `loan_purpose`: Purpose of loan (P=Purchase, C=Cash-out Refi, R=Rate/Term Refi)."}, {"source": "data_dictionary.md", "content": "* `property_type`: Type of property (SF=Single Family, CO=Condo, PU=PUD)."}, {"source": "data_dictionary.md", "content": "* `vintage`: Year/Quarter of origination (string)."}, {"source": "data_dictionary.md", "content": "* `loan_id`: Unique loan identifier."}, {"source": "data_dictionary.md", "content": "* `reporting_period`: Month and year of the record (MMYYYY)."}, {"source": "data_dictionary.md", "content": "* `current_upb`: Current unpaid principal balance."}, {"source": "data_dictionary.md", "content": "* `current_interest_rate`: Current interest rate."}, {"source": "data_dictionary.md", "content": "* `loan_age`: Age of the loan in months."}, {"source": "data_dictionary.md", "content": "* `remaining_months`: Remaining months to maturity."}, {"source": "data_dictionary.md", "content": "* `delinquency_status`: Current delinquency status (0=Current, 1=30D, 2=60D, etc.)."}, {"source": "data_dictionary.md", "content": "* `zero_balance_code`: Reason for zero balance (e.g., 01=Prepaid, 02=Third Party Sale, 03=Short Sale, 09=REO)."}, {"source": "data_dictionary.md", "content": "* `loan_id`: Unique loan identifier."}, {"source": "data_dictionary.md", "content": "* `reporting_period`: Month and year of the record (MMYYYY)."}, {"source": "data_dictionary.md", "content": "* `delinquency_status`: Updated delinquency status."}, {"source": "data_dictionary.md", "content": "* `current_upb`: Updated current unpaid principal balance."}, {"source": "data_dictionary.md", "content": "* `update_date`: Date the servicer update was received."}, {"source": "validation_rules.json", "content": "balance_consistency: {\"description\": \"Current UPB cannot be greater than original balance + tolerance.\", \"type\": \"inequality\", \"check\": \"current_upb <= orig_balance * 1.05\"}"}, {"source": "validation_rules.json", "content": "delinquency_progression: {\"description\": \"Delinquency status cannot jump more than 1 month at a time.\", \"type\": \"sequential\", \"check\": \"delinquency_status(t) <= delinquency_status(t-1) + 1\"}"}, {"source": "validation_rules.json", "content": "closed_prepaid_status: {\"description\": \"If UPB is 0, zero_balance_code must be populated.\", \"type\": \"conditional\", \"check\": \"if current_upb == 0 then zero_balance_code is not null\"}"}];
+    const AL_QUEUE = [{"loan_id": 139458706, "credit_score": 644.0, "ltv": 5, "dti": 33, "prob_base": 0.0407299807584728, "anomaly_score": 1.0, "active_learning_priority": 0.9460649903792364}, {"loan_id": 139442902, "credit_score": 729.0, "ltv": 60, "dti": 16, "prob_base": 0.1203286340052769, "anomaly_score": 0.9146963446626762, "active_learning_priority": 0.9432124893339766}, {"loan_id": 139438055, "credit_score": 682.0, "ltv": 64, "dti": 25, "prob_base": 0.1881638552214512, "anomaly_score": 0.8786938713407332, "active_learning_priority": 0.9195650080596408}, {"loan_id": 139469034, "credit_score": 746.0, "ltv": 80, "dti": 38, "prob_base": 0.1217801069605969, "anomaly_score": 0.8405375658757743, "active_learning_priority": 0.9068588364181857}, {"loan_id": 139436871, "credit_score": 751.0, "ltv": 80, "dti": 39, "prob_base": 0.1501360404441889, "anomaly_score": 0.813805605400703, "active_learning_priority": 0.9061347824782572}, {"loan_id": 139438677, "credit_score": 749.0, "ltv": 10, "dti": 24, "prob_base": 0.3197218972649184, "anomaly_score": 0.9810583144523352, "active_learning_priority": 0.9049682085937084}, {"loan_id": 139468893, "credit_score": 814.0, "ltv": 14, "dti": 13, "prob_base": 0.0617303050602294, "anomaly_score": 0.8927319396749575, "active_learning_priority": 0.9029311223675937}, {"loan_id": 139437973, "credit_score": 802.0, "ltv": 41, "dti": 28, "prob_base": 0.054189729695339, "anomaly_score": 0.896338673139531, "active_learning_priority": 0.900964201417435}, {"loan_id": 139465015, "credit_score": 726.0, "ltv": 67, "dti": 45, "prob_base": 0.2528001563956009, "anomaly_score": 0.8960410458909072, "active_learning_priority": 0.8959204447476532}, {"loan_id": 139449694, "credit_score": 722.0, "ltv": 25, "dti": 42, "prob_base": 0.074225123906482, "anomaly_score": 0.8657145850762646, "active_learning_priority": 0.8956698544913734}];
+    
+        
+        // SWITCH TAB FUNCTION
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // LOAD METRIC LABELS
+        document.getElementById('val-mc-median').innerText = (MONTE_CARLO.median_prepayment_rate * 100).toFixed(2) + "%";
+        document.getElementById('val-auc-ci').innerText = "[" + CONF_INTERVAL.roc_auc_ci[0].toFixed(4) + ", " + CONF_INTERVAL.roc_auc_ci[1].toFixed(4) + "]";
+        document.getElementById('val-synthetic').innerText = (SYNTHETIC.synthetic_prepay_probability * 100).toFixed(2) + "%";
+
+        // LOAD FAIRNESS TABLES
+        document.getElementById('fair-prime-tpr').innerText = (FAIRNESS.true_positive_rates.Prime * 100).toFixed(2) + "%";
+        document.getElementById('fair-near-tpr').innerText = (FAIRNESS.true_positive_rates['Near-Prime'] * 100).toFixed(2) + "%";
+        document.getElementById('fair-subprime-tpr').innerText = (FAIRNESS.true_positive_rates.Subprime * 100).toFixed(2) + "%";
+        
+        document.getElementById('fair-prime-brier').innerText = CALIBRATION.Prime.brier_score.toFixed(4);
+        document.getElementById('fair-near-brier').innerText = CALIBRATION['Near-Prime'].brier_score.toFixed(4);
+        document.getElementById('fair-subprime-brier').innerText = CALIBRATION.Subprime.brier_score.toFixed(4);
+
+        // LOAD ACTIVE LEARNING QUEUE TABLE
+        const tbody = document.getElementById('al-table-body');
+        AL_QUEUE.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.loan_id}</td>
+                <td>${row.credit_score}</td>
+                <td>${row.ltv}%</td>
+                <td>${row.dti}%</td>
+                <td>${(row.prob_base * 100).toFixed(2)}%</td>
+                <td>${row.anomaly_score.toFixed(4)}</td>
+                <td><span class="badge badge-high">${row.active_learning_priority.toFixed(4)}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // GROUNDED RAG SEARCH
+        function executeRAG() {
+            const query = document.getElementById('ragQuery').value.toLowerCase();
+            const resultsBox = document.getElementById('ragResults');
+            resultsBox.innerHTML = '';
+            
+            if (!query.trim()) return;
+            
+            let matched = [];
+            RAG_DOCS.forEach(doc => {
+                let score = 0;
+                query.split(' ').forEach(word => {
+                    if (doc.content.toLowerCase().includes(word)) score++;
+                });
+                if (score > 0) {
+                    matched.push({ score, doc });
+                }
+            });
+            
+            matched.sort((a, b) => b.score - a.score);
+            const topHits = matched.slice(0, 3);
+            
+            if (topHits.length === 0) {
+                resultsBox.innerHTML = '<div class="result-item">No grounded definitions found.</div>';
+                return;
+            }
+            
+            topHits.forEach(hit => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.innerHTML = `
+                    <div class="result-source">${hit.doc.source}</div>
+                    <div class="result-text">${hit.doc.content}</div>
+                `;
+                resultsBox.appendChild(item);
+            });
+        }
+
+        // CHART: STRESS SENSITIVITY
+        const ctxSensitivity = document.getElementById('chartSensitivity').getContext('2d');
+        new Chart(ctxSensitivity, {
+            type: 'bar',
+            data: {
+                labels: ['Base Prepayment Rate', 'Credit Stress (-50 FICO)', 'Interest Rate Stress (+2.0%)'],
+                datasets: [{
+                    label: 'Mean Probability',
+                    data: [SENSITIVITY.base_probability, SENSITIVITY.credit_stress_probability, SENSITIVITY.rate_stress_probability],
+                    backgroundColor: ['#64748b', '#ef4444', '#3b82f6'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // CHART: CALIBRATION
+        const ctxCalibration = document.getElementById('chartCalibration').getContext('2d');
+        new Chart(ctxCalibration, {
+            type: 'bar',
+            data: {
+                labels: ['Subprime', 'Near-Prime', 'Prime'],
+                datasets: [{
+                    label: 'Brier Loss',
+                    data: [CALIBRATION.Subprime.brier_score, CALIBRATION['Near-Prime'].brier_score, CALIBRATION.Prime.brier_score],
+                    backgroundColor: '#10b981',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // CHART: COMPETING RISK
+        const ctxCompeting = document.getElementById('chartCompeting').getContext('2d');
+        new Chart(ctxCompeting, {
+            type: 'line',
+            data: {
+                labels: COMP_RISK.months.map(m => "M" + m),
+                datasets: [
+                    {
+                        label: 'Prepayment Cumulative Incidence (CIF)',
+                        data: COMP_RISK.CIF_prepayment,
+                        borderColor: '#2563eb',
+                        fill: false
+                    },
+                    {
+                        label: 'Maturity Cumulative Incidence (CIF)',
+                        data: COMP_RISK.CIF_maturity,
+                        borderColor: '#10b981',
+                        fill: false
+                    },
+                    {
+                        label: 'Survival Probability S(t)',
+                        data: COMP_RISK.survival_prob,
+                        borderColor: '#64748b',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // CHART: DRIFT
+        const ctxDrift = document.getElementById('chartDrift').getContext('2d');
+        new Chart(ctxDrift, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(DRIFT),
+                datasets: [{
+                    label: 'PSI Value',
+                    data: Object.values(DRIFT),
+                    backgroundColor: '#3b82f6',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+</body>
+</html>

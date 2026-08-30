@@ -1,0 +1,8 @@
+{
+  "true_positive_rates": {
+    "Subprime": 0.5034965034965035,
+    "Near-Prime": 0.2815884476534296,
+    "Prime": 0.446773120425815
+  },
+  "equal_opportunity_difference": -0.05672338307068853
+}

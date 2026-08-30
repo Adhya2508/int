@@ -1,0 +1,10 @@
+[
+  {
+    "loan_id": "139435505",
+    "original_pred": "Flag for Refinance Risk",
+    "original_prob": 0.2288,
+    "counterfactual_scenario": "Decrease interest rate spread by 1.5%",
+    "target_pred": "Accept",
+    "target_prob": 0.0845
+  }
+]
