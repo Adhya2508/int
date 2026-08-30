@@ -1,0 +1,11 @@
+{
+  "reviewer_summary": "Loan ID 139435515 is a borderline case with a prepayment probability of 14.20%, which is extremely close to the 14.86% risk threshold.",
+  "why_flagged": "Flagged due to marginal proximity to the prepayment risk threshold. Feature drivers are moderate and show no rule violations.",
+  "manual_checklists": [
+    "Monitor next month's payment interest rate spread.",
+    "Check for recent credit inquiries."
+  ],
+  "confidence_level": "Medium",
+  "recommendation_label": "review",
+  "disclaimer": "This is a machine-generated recommendation to assist the reviewer. The final decision must be made by a qualified credit analyst."
+}

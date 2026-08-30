@@ -1,0 +1,14 @@
+{
+  "reviewer_summary": "Loan 139435505 (vintage 2025Q1) has a strong credit score (764) but a high LTV (89%) and a calibrated prepayment probability of 22.88%, which exceeds the prepayment risk threshold of 14.86%. The decision band is Flag_Prepay_Risk.",
+  "why_flagged": "The loan is flagged due to its prepayment risk status: the model\u2011derived prepayment probability (22.88%) is well above the defined threshold (14.86%), triggering the Flag_Prepay_Risk band. The top feature drivers contributing to this outcome are the loan purpose (loan_purpose_P) and the current interest rate lagged by one period (current_interest_rate_lag1). No business rule violations or exception flags are present, and the anomaly score (0.6056) is moderate, not itself a trigger.",
+  "manual_checklists": [
+    "Validate the loan purpose classification (loan_purpose_P) and its relevance to prepayment behavior.",
+    "Confirm the current interest rate and its lagged value to ensure model inputs are accurate.",
+    "Assess the impact of the high LTV (89%) on potential refinancing or prepayment incentives.",
+    "Review borrower\u2019s payment history and any qualitative factors not captured in the model (e.g., employment stability).",
+    "Verify that no hidden anomalies or data quality issues exist despite the moderate anomaly score."
+  ],
+  "confidence_level": "Medium",
+  "recommendation_label": "review",
+  "disclaimer": "This is a machine-generated recommendation to assist the reviewer. The final decision must be made by a qualified credit analyst."
+}
