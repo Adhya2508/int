@@ -2,9 +2,9 @@
   "reviewer_summary": "Loan ID 139435515 has a credit score of 720, an LTV of 82%, and a DTI of 38%. The prepayment probability is 14.20%, which is below the prepayment risk threshold of 14.86%. The loan shows no signs of delinquency.",
   "why_flagged": "The loan is flagged due to a prepayment probability of 14.20%, which is close to the prepayment risk threshold of 14.86%. Additionally, the anomaly score of 0.4500 indicates a moderate level of concern, although there are no business rule violations or exception flags.",
   "manual_checklists": [
-    "Verify the borrower's credit history and any recent changes in financial status.",
-    "Assess the current market conditions that may affect prepayment risk.",
-    "Review the loan's performance in relation to similar loans in the portfolio."
+    "Verify the accuracy of the credit score and DTI ratio.",
+    "Assess the implications of the prepayment probability being near the threshold.",
+    "Review the lagged performance features for any potential trends."
   ],
   "confidence_level": "Medium",
   "recommendation_label": "review",
