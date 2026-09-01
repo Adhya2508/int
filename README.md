@@ -12,6 +12,9 @@
 
 ---
 
+### 🌐 **[LIVE DASHBOARD DEMO: click here to view on Vercel!](https://int-kappa.vercel.app/)**
+
+---
 ## 📌 Project Overview
 
 This repository implements a complete AI-powered loan performance analytics pipeline for structured mortgage portfolios. Processing loan-level data across monthly performance panels, it applies robust statistical models for prepayment prediction and anomaly detection, surfacing actionable intelligence through a **stunning interactive dashboard** and a **grounded LLM reviewer copilot**.
