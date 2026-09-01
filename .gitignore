@@ -17,3 +17,7 @@ __pycache__/
 *.pyc
 report_output.txt
 report_output.html
+
+# Exclude submission documents
+GITHUB LINK.docx
+INTAIN VIDEO RECORDING EXPLANATION.mp4
