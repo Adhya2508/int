@@ -80,6 +80,46 @@ e:/intain/
 
 ---
 
+## 📸 Dashboard Screenshots
+
+> A visual walkthrough of the Intain Loan Intelligence Engine's interactive dashboard and its core analytical modules.
+
+### 🏠 Executive Summary — Key Performance Indicators
+![Executive Summary](ss/Screenshot%202026-09-03%20165714.png)
+> The landing view of the dashboard displaying Monte Carlo prepayment rate (6.11%), Validation ROC-AUC (0.8116), bootstrap confidence intervals, and synthetic stress projections — all at a glance.
+
+---
+
+### 📊 Summary Metrics — Portfolio Health Overview
+![Summary Metrics](ss/Screenshot%202026-09-03%20165722.png)
+> A clean card-based layout summarizing the portfolio's core health indicators including model accuracy, uncertainty bounds, and stressed prepayment rates under adverse scenarios.
+
+---
+
+### 📈 Stress Sensitivity & Calibration Charts
+![Stress & Calibration](ss/Screenshot%202026-09-03%20165732.png)
+> Side-by-side bar charts showing stress sensitivity across feature clusters (FICO shocks, interest rate hikes) and Brier Score calibration error broken down by credit band (Subprime, Near-Prime, Prime).
+
+---
+
+### 🧪 Loan Test Bench — Interactive Risk Engine
+![Loan Test Bench](ss/Screenshot%202026-09-03%20165748.png)
+> The interactive playground where users can input or select sample loan cases and instantly receive AI-driven risk assessments, SHAP explanations, grounded dictionary lookups, and LLM Copilot reviewer recommendations.
+
+---
+
+### 📉 Competing Risk / Survival Analysis
+![Competing Risk](ss/Screenshot%202026-09-03%20165804.png)
+> Discrete-time survival curves visualizing the competing risks of prepayment vs. maturity over a 12-month horizon, using Cumulative Incidence Functions (CIF) and Kaplan-Meier survival probability S(t).
+
+---
+
+### 🔍 Active Learning Priority Review Queue
+![Active Learning Queue](ss/Screenshot%202026-09-03%20165817.png)
+> A ranked table of loans prioritized for manual review based on a composite score of model uncertainty and anomaly index, with auto-generated reviewer notes flagging specific risk concerns.
+
+---
+
 ## 🚀 Quick Start & Installation
 
 ### 1. Prerequisites
